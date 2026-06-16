@@ -348,12 +348,6 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
     box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 0.5px 0 rgba(255,255,255,0.08);
   }
 }
-
-/* ── Sync status ── */
-.sync-status { font-size: 11px; letter-spacing: -0.1px; transition: all 0.3s; min-width: 90px; text-align: right; }
-.sync-status.syncing { color: var(--t3); }
-.sync-status.ok      { color: #30d158; }
-.sync-status.err     { color: #ff453a; }
 </style>
 </head>
 <body>
@@ -383,7 +377,6 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
           <button class="wk-label" id="wk-label" onclick="openCalModal()" title="Choisir une semaine"></button>
           <button class="wk-arrow" onclick="changeWeek(1)">›</button>
           <button class="today-btn" onclick="goToday()">Aujourd'hui</button>
-          <span class="sync-status" id="sync-status"></span>
         </div>
       </div>
     </div>
@@ -479,80 +472,20 @@ const RES = [
 ];
 const ALL = [...ACT, ...RES];
 
-// ── Firebase config ───────────────────────────────────────────────
-const FB_URL = 'https://suivi-kpi-2cb67-default-rtdb.europe-west1.firebasedatabase.app/suivi.json';
-
 // ── State ─────────────────────────────────────────────────────────
 let S = { cities:[...CITIES_DEFAULT], city:CITIES_DEFAULT[0], week:wkKey(new Date()), data:{} };
-let _saveTimer = null;
 
-function showSync(state) {
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  if (state === 'saving') { el.textContent = '↑ Sync…'; el.className = 'sync-status syncing'; }
-  else if (state === 'saved') { el.textContent = '✓ Synchronisé'; el.className = 'sync-status ok'; setTimeout(()=>{ el.textContent=''; el.className='sync-status'; }, 2500); }
-  else if (state === 'error') { el.textContent = '⚠ Hors ligne'; el.className = 'sync-status err'; }
-}
-
-async function load() {
-  // Affichage immédiat depuis le cache local
+function load() {
   try { const s = localStorage.getItem('sa_v3'); if(s) S = JSON.parse(s); } catch(e){}
   if (!S.cities?.length) S.cities = [...CITIES_DEFAULT];
   if (!S.cities.includes(S.city)) S.city = S.cities[0];
   if (!S.week) S.week = wkKey(new Date());
-  // Puis synchronisation Firebase (la source de vérité)
-  try {
-    showSync('saving');
-    const res = await fetch(FB_URL);
-    if (res.ok) {
-      const remote = await res.json();
-      if (remote && remote.cities) {
-        // Garder la ville/semaine courante de l'utilisateur, prendre les données distantes
-        const currentCity = S.city;
-        const currentWeek = S.week;
-        S = remote;
-        S.city = S.cities.includes(currentCity) ? currentCity : S.cities[0];
-        S.week = currentWeek;
-        localStorage.setItem('sa_v3', JSON.stringify(S));
-      }
-      showSync('saved');
-    } else { showSync('error'); }
-  } catch(e) { showSync('error'); }
-  // Écoute temps réel : recharge toutes les 30s si la page est active
-  setInterval(async () => {
-    if (document.hidden) return;
-    try {
-      const res = await fetch(FB_URL);
-      if (!res.ok) return;
-      const remote = await res.json();
-      if (!remote?.cities) return;
-      const currentCity = S.city;
-      const currentWeek = S.week;
-      S = remote;
-      S.city = S.cities.includes(currentCity) ? currentCity : S.cities[0];
-      S.week = currentWeek;
-      localStorage.setItem('sa_v3', JSON.stringify(S));
-      render();
-    } catch(e) {}
-  }, 30000);
 }
 
 function save() {
   const n = document.getElementById('notes');
   if (n) getD(S.city, S.week)._notes = n.value;
-  localStorage.setItem('sa_v3', JSON.stringify(S));
-  clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(async () => {
-    showSync('saving');
-    try {
-      const res = await fetch(FB_URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(S)
-      });
-      if (res.ok) showSync('saved'); else showSync('error');
-    } catch(e) { showSync('error'); }
-  }, 1000);
+  try { localStorage.setItem('sa_v3', JSON.stringify(S)); } catch(e){}
 }
 function getD(city, week) {
   if (!S.data[week]) S.data[week] = {};
@@ -870,7 +803,8 @@ if ('serviceWorker' in navigator) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────
-load().then(() => render()).catch(() => render());
+load();
+render();
 </script>
 </body>
 </html>
