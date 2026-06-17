@@ -521,18 +521,23 @@ function userKey(name) {
 }
 
 function doLogin() {
-  const name = document.getElementById('login-name').value.trim();
-  const city = document.getElementById('login-city').value.trim();
-  if (!name) return;
-  ME = { key: userKey(name), name, city: city || '—' };
-  localStorage.setItem('me_v2', JSON.stringify(ME));
+  const nameEl = document.getElementById('login-name');
+  const cityEl = document.getElementById('login-city');
+  const name = nameEl ? nameEl.value.trim() : '';
+  const city = cityEl ? cityEl.value.trim() : '';
+  if (!name) { nameEl && nameEl.focus(); return; }
+  ME = { key: name.toLowerCase().replace(/[^a-z0-9]/g,'_'), name: name, city: city || '—' };
+  try { localStorage.setItem('me_v2', JSON.stringify(ME)); } catch(e){}
   document.getElementById('login-screen').classList.remove('on');
   initMe();
-  // Create my slot if not exists
   if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
   else { teamData[ME.key].name = ME.name; teamData[ME.key].city = ME.city; }
-  pushMyData();
-  fetchTeam().then(() => renderTeam());
+  showLoading();
+  fetchTeam().then(() => {
+    if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
+    pushMyData();
+    renderTeam();
+  }).catch(() => { renderTeam(); });
   startPolling();
 }
 
