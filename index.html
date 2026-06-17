@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f2f2f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Suivi KPIs">
 <title>Suivi KPIs</title>
 <style>
@@ -19,13 +18,12 @@
   --t2:        #6e6e73;
   --t3:        #aeaeb2;
   --border:    rgba(0,0,0,0.07);
-  --border2:   rgba(0,0,0,0.12);
+  --border2:   rgba(0,0,0,0.13);
   --accent:    #0071e3;
   --accent-fg: #ffffff;
   --r1: 10px; --r2: 14px; --r3: 20px;
-  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', sans-serif;
 }
-
 .dark {
   --bg:        #000000;
   --bg2:       #1c1c1e;
@@ -33,7 +31,7 @@
   --t1:        #f5f5f7;
   --t2:        #98989d;
   --t3:        #48484a;
-  --border:    rgba(255,255,255,0.08);
+  --border:    rgba(255,255,255,0.07);
   --border2:   rgba(255,255,255,0.14);
   --accent:    #0a84ff;
   --accent-fg: #ffffff;
@@ -41,1004 +39,802 @@
 
 html, body { font-family: var(--font); background: var(--bg); color: var(--t1); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-/* ── Shell ── */
-.shell { display: flex; min-height: 100vh; }
-
-/* ── Sidebar ── */
-.sidebar {
-  width: 210px; flex-shrink: 0;
-  background: var(--bg2);
-  border-right: 0.5px solid var(--border);
-  display: flex; flex-direction: column;
-  padding: 32px 12px 24px;
-  position: sticky; top: 0; height: 100vh; overflow-y: auto;
-}
-.logo { padding: 0 10px; margin-bottom: 32px; }
-.logo-title { font-size: 14px; font-weight: 600; letter-spacing: -0.2px; color: var(--t1); }
-.logo-sub   { font-size: 11px; color: var(--t3); margin-top: 2px; letter-spacing: 0; }
-
-.nav-label {
-  font-size: 10px; font-weight: 500; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--t3); padding: 0 10px; margin-bottom: 4px;
-}
-.city-list { display: flex; flex-direction: column; gap: 1px; }
-.city-btn {
-  padding: 7px 10px; border-radius: var(--r1);
-  font-size: 13.5px; font-weight: 400; color: var(--t2); letter-spacing: -0.1px;
-  cursor: pointer; transition: background 0.12s, color 0.12s;
-  display: flex; align-items: center; justify-content: space-between;
-  border: none; background: transparent; text-align: left; width: 100%;
-  user-select: none; -webkit-user-select: none;
-}
-.city-btn:hover  { background: var(--bg3); color: var(--t1); }
-.city-btn.active { background: var(--accent); color: var(--accent-fg); font-weight: 500; border-radius: var(--r1); }
-.city-del {
-  width: 18px; height: 18px; border-radius: 50%; border: none;
-  background: transparent; color: var(--t3); cursor: pointer;
-  display: none; align-items: center; justify-content: center;
-  font-size: 13px; line-height: 1; flex-shrink: 0; padding: 0;
-  transition: background 0.1s, color 0.1s;
-}
-.city-btn:hover .city-del { display: flex; }
-.city-del:hover { background: rgba(255,60,60,0.15); color: #ff3b30; }
-
-.add-city-btn {
-  margin-top: 6px; padding: 7px 10px; border-radius: var(--r1);
-  font-size: 13px; color: var(--t3); border: 0.5px dashed var(--border2);
-  background: transparent; cursor: pointer; display: flex; align-items: center; gap: 6px;
-  width: 100%; transition: all 0.12s; user-select: none;
-}
-.add-city-btn:hover { color: var(--t1); background: var(--bg3); }
-.sidebar-foot { margin-top: auto; }
-
-/* ── Main ── */
-.main { flex: 1; padding: 32px 36px 48px; max-width: 780px; background: var(--bg); }
-
-/* Top bar */
-.topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 30px; }
-.city-name { font-size: 30px; font-weight: 700; letter-spacing: -0.8px; color: var(--t1); }
-.week-row  { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-.wk-arrow {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: var(--bg2);
-  border: 0.5px solid var(--border2);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  color: var(--t2); cursor: pointer; font-size: 15px;
-  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-  user-select: none;
-}
-.wk-arrow:hover { background: var(--bg3); color: var(--t1); }
-
-.wk-label {
-  font-size: 13px; color: var(--t2); letter-spacing: -0.1px;
-  border-radius: 20px; padding: 5px 14px; cursor: pointer;
-  background: var(--bg2);
-  border: 0.5px solid var(--border2);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: all 0.15s;
-}
-.wk-label:hover { background: var(--bg3); }
-
-.today-btn {
-  font-size: 12px; color: var(--t3);
-  border: 0.5px solid var(--border); border-radius: 20px;
-  padding: 4px 10px; background: transparent; cursor: pointer;
-  transition: all 0.12s; letter-spacing: -0.1px;
-}
-.today-btn:hover { color: var(--t1); border-color: var(--border2); }
-
-/* ── KPI carousel ── */
-.carousel-wrap {
-  position: relative; margin-bottom: 6px;
-  overflow: hidden;
-}
-.carousel-wrap::before,
-.carousel-wrap::after {
-  content: ''; position: absolute; top: 0; bottom: 8px; width: 28px;
-  z-index: 2; pointer-events: none;
-}
-.carousel-wrap::before { left: 0;  background: linear-gradient(to right, var(--bg) 30%, transparent); }
-.carousel-wrap::after  { right: 0; background: linear-gradient(to left,  var(--bg) 30%, transparent); }
-
-.kpi-strip {
-  display: flex; gap: 8px;
-  overflow-x: scroll; scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 2px 0 10px;
-  user-select: none; -webkit-user-select: none;
-}
-.kpi-strip::-webkit-scrollbar { display: none; }
-
-.kpi-card {
-  flex: 0 0 148px; scroll-snap-align: start;
-  background: var(--bg2); border-radius: var(--r2);
-  padding: 14px 16px; border: 0.5px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  pointer-events: none;
-}
-.kpi-card .kl { font-size: 11px; font-weight: 400; color: var(--t3); margin-bottom: 8px; letter-spacing: -0.05px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.kpi-card .kv { font-size: 28px; font-weight: 700; color: var(--t1); line-height: 1; letter-spacing: -1px; }
-
-.carousel-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px; margin-top: 8px; }
-.c-arrow {
-  width: 30px; height: 30px; border-radius: 50%;
-  border: 0.5px solid var(--border2); background: var(--bg2);
-  color: var(--t1); cursor: pointer; font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.12s, transform 0.1s;
-  user-select: none; -webkit-user-select: none;
-}
-.c-arrow:hover  { background: var(--bg3); }
-.c-arrow:active { transform: scale(0.88); }
-
-/* ── Section labels ── */
-.section-label {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--t3); margin: 24px 0 10px;
-}
-
-/* ── Metric grid ── */
-.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.m-card {
-  background: var(--bg2); border: 0.5px solid var(--border);
-  border-radius: var(--r2); padding: 16px 18px;
-  display: flex; align-items: center; justify-content: space-between;
-  transition: box-shadow 0.15s, border-color 0.15s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}
-.m-card:hover { border-color: var(--border2); box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-.m-left { flex: 1; min-width: 0; }
-.m-name { font-size: 12.5px; font-weight: 400; color: var(--t2); margin-bottom: 5px; letter-spacing: -0.1px; }
-.m-val  { font-size: 28px; font-weight: 700; color: var(--t1); line-height: 1; letter-spacing: -1px; }
-.m-btns { display: flex; flex-direction: column; gap: 5px; margin-left: 14px; }
-.m-btn {
-  width: 28px; height: 28px; border-radius: 8px;
-  border: 0.5px solid var(--border2); background: var(--bg);
-  color: var(--t2); cursor: pointer; font-size: 16px; font-weight: 300;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.1s; user-select: none; -webkit-user-select: none;
-}
-.m-btn:hover  { background: var(--accent); color: #fff; border-color: transparent; }
-.m-btn:active { transform: scale(0.91); }
-
-/* ── Notes ── */
-.notes-wrap { margin-top: 24px; }
-.notes-wrap textarea {
-  width: 100%; padding: 12px 14px; border-radius: var(--r2);
-  border: 0.5px solid var(--border); background: var(--bg2); box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  color: var(--t1); font-family: var(--font); font-size: 13.5px; letter-spacing: -0.1px;
-  line-height: 1.6; resize: none; outline: none; transition: border-color 0.15s;
-}
-.notes-wrap textarea:focus { border-color: var(--border2); }
-.notes-wrap textarea::placeholder { color: var(--t3); }
-
-/* ── Actions ── */
-.actions { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
-.act-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border-radius: var(--r1);
-  font-size: 13px; font-family: var(--font); letter-spacing: -0.1px;
-  cursor: pointer; transition: all 0.12s;
-  border: 0.5px solid var(--border2); background: var(--bg2); color: var(--t1);
-  user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-.act-btn:hover { background: var(--bg3); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.act-btn.primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; box-shadow: 0 2px 8px rgba(0,113,227,0.25); }
-.act-btn.primary:hover { opacity: 0.88; box-shadow: 0 4px 14px rgba(0,113,227,0.3); }
-
-/* ── Calendar modal ── */
-.cal-modal-bg {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.28); backdrop-filter: blur(6px) saturate(1.4);
-  align-items: center; justify-content: center; z-index: 200;
-}
-.cal-modal-bg.open { display: flex; }
-.cal-box {
-  border-radius: var(--r3);
-  padding: 22px 22px 18px;
-  width: 320px; max-height: 90vh; display: flex; flex-direction: column;
-}
-.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.cal-header h3 { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
-.cal-nav { display: flex; gap: 6px; }
-.cal-nav-btn {
-  width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid var(--border2);
-  background: transparent; color: var(--t2); cursor: pointer; font-size: 15px;
-  display: flex; align-items: center; justify-content: center; transition: background 0.1s;
-}
-.cal-nav-btn:hover { background: var(--bg2); color: var(--t1); }
-.cal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border2) transparent; padding-right: 2px; }
-.cal-wk {
-  padding: 8px 10px; border-radius: var(--r1); border: 0.5px solid var(--border);
-  background: transparent; color: var(--t1); font-size: 12.5px; cursor: pointer;
-  text-align: left; font-family: var(--font); transition: background 0.1s, border-color 0.1s;
-  letter-spacing: -0.1px;
-}
-.cal-wk:hover { background: var(--bg2); border-color: var(--border2); }
-.cal-wk.current-week { border-color: var(--accent); font-weight: 500; }
-.cal-wk.selected { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
-.cal-footer { display: flex; justify-content: flex-end; margin-top: 14px; }
-.cal-close { padding: 7px 16px; border-radius: var(--r1); border: 0.5px solid var(--border2); background: transparent; color: var(--t2); font-family: var(--font); font-size: 13px; cursor: pointer; }
-
-/* ── Modal ── */
-.modal-bg {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.28); backdrop-filter: blur(6px) saturate(1.4);
-  align-items: center; justify-content: center; z-index: 200;
-}
-.modal-bg.open { display: flex; }
-.modal {
-  border-radius: var(--r3);
-  padding: 26px;
-  width: 300px;
-}
-.modal h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 14px; }
-.modal input {
-  width: 100%; padding: 10px 12px; border-radius: var(--r1);
-  border: 0.5px solid var(--border2); background: var(--bg2);
-  color: var(--t1); font-family: var(--font); font-size: 14px; outline: none; letter-spacing: -0.1px;
-}
-.modal input:focus { border-color: var(--t2); }
-.modal-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
-.m-cancel { padding: 8px 14px; border-radius: var(--r1); border: 0.5px solid var(--border2); background: transparent; color: var(--t2); font-family: var(--font); font-size: 13px; cursor: pointer; }
-.m-ok     { padding: 8px 16px; border-radius: var(--r1); border: none; background: var(--accent); color: var(--accent-fg); font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; }
-
-/* ── Toast ── */
-.toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px);
-  background: rgba(29,29,31,0.82); color: #f5f5f7;
-  backdrop-filter: blur(20px) saturate(1.8);
-  -webkit-backdrop-filter: blur(20px) saturate(1.8);
-  border: 0.5px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.22);
-  padding: 9px 20px; border-radius: 20px; font-size: 13px; letter-spacing: -0.1px;
-  opacity: 0; transition: opacity 0.22s, transform 0.22s; pointer-events: none; z-index: 300;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── Install banner ── */
-.install-bar {
-  display: none; position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--bg); border-top: 0.5px solid var(--border);
-  padding: 14px 24px; align-items: center; justify-content: space-between; gap: 16px; z-index: 150;
-}
-.install-bar.on { display: flex; }
-.install-bar span { font-size: 13px; color: var(--t2); }
-.install-bar-btns { display: flex; gap: 8px; }
-.ib-dismiss { padding: 6px 12px; border-radius: var(--r1); border: 0.5px solid var(--border); background: transparent; color: var(--t2); font-size: 12px; cursor: pointer; }
-.ib-go      { padding: 6px 14px; border-radius: var(--r1); border: none; background: var(--accent); color: var(--accent-fg); font-size: 12px; font-weight: 500; cursor: pointer; }
-
-/* ── Responsive ── */
-@media (max-width: 640px) {
-  .shell { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; padding: 14px 12px 10px; gap: 6px; border-right: none; border-bottom: 0.5px solid var(--border); }
-  .logo, .nav-label, .sidebar-foot { display: none; }
-  .city-list { flex-direction: row; flex-wrap: wrap; gap: 4px; }
-  .city-btn { padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); font-size: 13px; }
-  .city-btn.active { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
-  .add-city-btn { width: auto; padding: 5px 12px; border-radius: 20px; }
-  .main { padding: 20px 16px 40px; }
-  .city-name { font-size: 24px; }
-  .metric-grid { grid-template-columns: 1fr; }
-}
-
-/* ── Liquid Glass ── */
-.glass {
-  background: rgba(255,255,255,0.55);
-  backdrop-filter: blur(28px) saturate(1.8) brightness(1.05);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8) brightness(1.05);
-  border: 0.5px solid rgba(255,255,255,0.55);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.08), inset 0 0.5px 0 rgba(255,255,255,0.7);
-}
-
-
-/* ── Dark mode toggle ── */
-.theme-toggle {
-  position: fixed; top: 16px; right: 20px; z-index: 100;
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 0.5px solid var(--border2);
-  background: var(--bg2);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08), inset 0 0.5px 0 rgba(255,255,255,0.5);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; color: var(--t2);
-  user-select: none;
-}
-.theme-toggle:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,0,0,0.12); color: var(--t1); }
-.theme-toggle:active { transform: scale(0.94); }
-.dark .theme-toggle { box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 0.5px 0 rgba(255,255,255,0.06); }
-
-/* ── Login screen ── */
+/* ── Login ── */
 .login-screen {
   display: none; position: fixed; inset: 0; z-index: 500;
-  background: var(--bg);
-  align-items: center; justify-content: center; flex-direction: column;
+  background: var(--bg); align-items: center; justify-content: center;
 }
-.login-screen.visible { display: flex; }
+.login-screen.on { display: flex; }
 .login-box {
   background: var(--bg2); border-radius: var(--r3);
-  border: 0.5px solid var(--border); padding: 36px 32px;
-  width: 320px; text-align: center;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+  border: 0.5px solid var(--border2); padding: 40px 32px;
+  width: 340px; text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.08);
 }
-.login-logo { font-size: 32px; margin-bottom: 8px; }
-.login-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--t1); margin-bottom: 6px; }
+.login-icon { font-size: 36px; margin-bottom: 12px; }
+.login-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
 .login-sub { font-size: 13px; color: var(--t3); margin-bottom: 28px; }
-.login-input {
-  width: 100%; padding: 12px 14px; border-radius: var(--r1);
+.login-field { margin-bottom: 10px; }
+.login-field input {
+  width: 100%; padding: 11px 14px; border-radius: var(--r1);
   border: 0.5px solid var(--border2); background: var(--bg);
   color: var(--t1); font-family: var(--font); font-size: 15px;
-  text-align: center; outline: none; margin-bottom: 12px;
-  transition: border-color 0.15s;
+  outline: none; transition: border-color 0.15s; text-align: center;
 }
-.login-input:focus { border-color: var(--accent); }
+.login-field input:focus { border-color: var(--accent); }
+.login-field input::placeholder { color: var(--t3); }
 .login-btn {
-  width: 100%; padding: 12px; border-radius: var(--r1);
+  width: 100%; padding: 12px; border-radius: var(--r1); margin-top: 6px;
   background: var(--accent); color: var(--accent-fg);
   border: none; font-family: var(--font); font-size: 15px;
-  font-weight: 600; cursor: pointer; transition: opacity 0.15s;
-  letter-spacing: -0.2px;
+  font-weight: 600; cursor: pointer; transition: opacity 0.15s; letter-spacing: -0.2px;
 }
 .login-btn:hover { opacity: 0.88; }
-.login-btn:disabled { opacity: 0.4; cursor: default; }
+.login-btn:disabled { opacity: 0.35; cursor: default; }
 
-/* ── Sync indicator ── */
-.sync-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--t3); display: inline-block;
-  margin-right: 6px; transition: background 0.3s;
+/* ── Top bar ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg2); border-bottom: 0.5px solid var(--border);
+  padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
-.sync-dot.ok  { background: #30d158; }
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.app-title { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+.week-row { display: flex; align-items: center; gap: 7px; }
+.wk-arrow {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 0.5px solid var(--border2); background: var(--bg);
+  color: var(--t2); cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.12s;
+}
+.wk-arrow:hover { background: var(--bg3); color: var(--t1); }
+.wk-label {
+  font-size: 13px; color: var(--t2); background: var(--bg);
+  border: 0.5px solid var(--border2); border-radius: 20px;
+  padding: 4px 12px; cursor: pointer; transition: all 0.12s; white-space: nowrap;
+}
+.wk-label:hover { background: var(--bg3); }
+.today-btn {
+  font-size: 12px; color: var(--t3); border: 0.5px solid var(--border);
+  border-radius: 20px; padding: 4px 10px; background: transparent; cursor: pointer;
+}
+.today-btn:hover { color: var(--t1); border-color: var(--border2); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.sync-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--t3); padding: 3px 10px;
+  background: var(--bg); border: 0.5px solid var(--border); border-radius: 20px;
+}
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--t3); transition: background 0.3s; }
+.sync-dot.ok { background: #30d158; }
 .sync-dot.err { background: #ff453a; }
 .sync-dot.syncing { background: #ff9f0a; animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-/* ── User badge in sidebar ── */
-.user-badge {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; border-radius: var(--r1);
-  background: var(--bg3); margin-bottom: 20px;
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+.theme-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 0.5px solid var(--border2); background: var(--bg2);
+  color: var(--t2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
 }
-.user-avatar {
-  width: 28px; height: 28px; border-radius: 50%;
+.theme-btn:hover { background: var(--bg3); color: var(--t1); }
+.me-badge {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 10px 5px 6px; border-radius: 20px;
+  background: var(--bg); border: 0.5px solid var(--border2); cursor: pointer;
+}
+.me-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
   background: var(--accent); color: var(--accent-fg);
+  font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 600; flex-shrink: 0;
 }
-.user-name { font-size: 13px; font-weight: 500; color: var(--t1); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.user-sync { display: flex; align-items: center; }
-.logout-btn { font-size: 10px; color: var(--t3); background: none; border: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
-.logout-btn:hover { color: var(--t1); background: var(--border); }
+.me-name { font-size: 12px; font-weight: 500; color: var(--t1); }
+
+/* ── Main ── */
+.main { padding: 28px 24px 60px; }
+.team-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.team-title { font-size: 13px; font-weight: 500; color: var(--t3); letter-spacing: 0.06em; text-transform: uppercase; }
+.add-me-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--r1);
+  border: 0.5px solid var(--accent); color: var(--accent);
+  background: transparent; font-family: var(--font); font-size: 13px;
+  cursor: pointer; transition: all 0.12s;
+}
+.add-me-btn:hover { background: var(--accent); color: var(--accent-fg); }
+
+/* ── Team grid ── */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.member-card {
+  background: var(--bg2); border-radius: var(--r2);
+  border: 0.5px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  overflow: hidden; transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.member-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.09); transform: translateY(-1px); }
+.member-card.is-me { border-color: var(--accent); }
+.card-header {
+  padding: 16px 18px 12px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  border-bottom: 0.5px solid var(--border);
+}
+.card-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-fg);
+  font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.card-avatar.alt0 { background: #30d158; }
+.card-avatar.alt1 { background: #ff9f0a; }
+.card-avatar.alt2 { background: #ff453a; }
+.card-avatar.alt3 { background: #bf5af2; }
+.card-avatar.alt4 { background: #ff375f; }
+.card-avatar.alt5 { background: #00c7be; }
+.card-avatar.alt6 { background: #32ade6; }
+.card-avatar.alt7 { background: #ac8e68; }
+.card-info { flex: 1; margin-left: 12px; }
+.card-name { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; color: var(--t1); }
+.card-city { font-size: 12px; color: var(--t3); margin-top: 2px; }
+.card-me-tag {
+  font-size: 10px; font-weight: 600; color: var(--accent);
+  background: rgba(0,113,227,0.1); border-radius: 6px; padding: 2px 7px;
+}
+.dark .card-me-tag { background: rgba(10,132,255,0.15); }
+.card-metrics { padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card-metric { }
+.cm-label { font-size: 10px; color: var(--t3); margin-bottom: 2px; letter-spacing: -0.05px; }
+.cm-value { font-size: 20px; font-weight: 700; color: var(--t1); letter-spacing: -0.5px; }
+.card-footer { padding: 10px 18px; border-top: 0.5px solid var(--border); display: flex; justify-content: flex-end; }
+.edit-hint { font-size: 11px; color: var(--t3); }
+
+/* ── Detail modal ── */
+.detail-bg {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.35); backdrop-filter: blur(10px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.detail-bg.on { display: flex; }
+.detail-sheet {
+  background: var(--bg2); border-radius: var(--r3);
+  width: 100%; max-width: 560px; max-height: 88vh;
+  overflow-y: auto; padding: 0 0 32px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+}
+.sheet-handle { display: none; }
+.sheet-header { padding: 22px 24px 16px; display: flex; align-items: center; gap: 14px; border-bottom: 0.5px solid var(--border); }
+.sheet-avatar { width: 44px; height: 44px; border-radius: 50%; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+.sheet-name { font-size: 18px; font-weight: 700; letter-spacing: -0.4px; }
+.sheet-city { font-size: 13px; color: var(--t3); margin-top: 2px; }
+.sheet-close { width: 30px; height: 30px; border-radius: 50%; border: 0.5px solid var(--border2); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--t2); font-size: 16px; flex-shrink: 0; }
+.sheet-close:hover { background: var(--bg3); }
+/* Sheet action buttons */
+.sheet-actions { display: flex; gap: 8px; padding: 14px 24px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+.sh-act-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border-radius: var(--r1); font-size: 12px;
+  font-family: var(--font); cursor: pointer; transition: all 0.12s;
+  border: 0.5px solid var(--border2); background: var(--bg); color: var(--t1);
+}
+.sh-act-btn:hover { background: var(--bg3); }
+.sh-act-btn.danger { color: #ff3b30; border-color: rgba(255,59,48,0.3); }
+.sh-act-btn.danger:hover { background: rgba(255,59,48,0.08); }
+.sheet-section { padding: 16px 24px 0; }
+.sheet-section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--t3); margin-bottom: 10px; }
+.sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sheet-metric {
+  background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r1);
+  padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;
+}
+.sm-label { font-size: 12px; color: var(--t2); margin-bottom: 4px; }
+.sm-val { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; color: var(--t1); }
+.sm-btns { display: flex; flex-direction: column; gap: 4px; }
+.sm-btn {
+  width: 26px; height: 26px; border-radius: 7px;
+  border: 0.5px solid var(--border2); background: var(--bg2);
+  color: var(--t2); cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.1s;
+}
+.sm-btn:hover { background: var(--accent); color: #fff; border-color: transparent; }
+.sm-btn:active { transform: scale(0.9); }
+.sheet-notes { margin: 16px 24px 0; }
+.sheet-notes textarea {
+  width: 100%; padding: 11px 13px; border-radius: var(--r1);
+  border: 0.5px solid var(--border2); background: var(--bg);
+  color: var(--t1); font-family: var(--font); font-size: 13px; line-height: 1.6;
+  resize: none; outline: none; transition: border-color 0.15s;
+}
+.sheet-notes textarea:focus { border-color: var(--accent); }
+.sheet-notes textarea::placeholder { color: var(--t3); }
+
+/* ── Calendar modal ── */
+.cal-bg {
+  display: none; position: fixed; inset: 0; z-index: 400;
+  background: rgba(0,0,0,0.3); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+}
+.cal-bg.on { display: flex; }
+.cal-box {
+  background: var(--bg2); border-radius: var(--r3);
+  border: 0.5px solid var(--border2); padding: 22px;
+  width: 320px; max-height: 85vh; display: flex; flex-direction: column;
+}
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cal-head h3 { font-size: 16px; font-weight: 700; }
+.cal-nav { display: flex; gap: 6px; }
+.cal-nav-btn { width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid var(--border2); background: transparent; color: var(--t2); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.cal-nav-btn:hover { background: var(--bg3); color: var(--t1); }
+.cal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; overflow-y: auto; flex: 1; }
+.cal-wk {
+  padding: 8px 10px; border-radius: var(--r1); border: 0.5px solid var(--border);
+  background: transparent; color: var(--t1); font-size: 12px; cursor: pointer;
+  text-align: left; font-family: var(--font); transition: all 0.1s;
+}
+.cal-wk:hover { background: var(--bg3); }
+.cal-wk.current { border-color: var(--accent); }
+.cal-wk.selected { background: var(--accent); color: #fff; border-color: transparent; }
+.cal-footer { margin-top: 12px; text-align: right; }
+.cal-close-btn { padding: 7px 16px; border-radius: var(--r1); border: 0.5px solid var(--border2); background: transparent; color: var(--t2); font-family: var(--font); font-size: 13px; cursor: pointer; }
+
+/* ── Empty state ── */
+.empty-state { text-align: center; padding: 80px 24px; color: var(--t3); }
+.empty-state .big { font-size: 48px; margin-bottom: 16px; }
+.empty-state p { font-size: 15px; line-height: 1.6; }
+
+/* ── Toast ── */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--t1); color: var(--bg2); padding: 9px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: all 0.22s; pointer-events: none; z-index: 600; white-space: nowrap; }
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .team-grid { grid-template-columns: 1fr; }
+  .sheet-grid { grid-template-columns: 1fr; }
+  .wk-label { font-size: 12px; padding: 4px 9px; }
+}
 </style>
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle" title="Basculer dark/light mode">
-  <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/>
-    <line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/>
-    <line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-  </svg>
-</button>
-
-
+<!-- Login -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
-    <div class="login-logo">📊</div>
+    <div class="login-icon">📊</div>
     <div class="login-title">Suivi KPIs</div>
-    <div class="login-sub">Entre ton prénom pour accéder à ton espace</div>
-    <input class="login-input" id="login-input" type="text" placeholder="Ton prénom" autocomplete="off" maxlength="30" />
-    <button class="login-btn" id="login-btn" onclick="doLogin()" disabled>Continuer</button>
+    <div class="login-sub">Crée ton profil ou retrouve ton espace</div>
+    <div class="login-field"><input type="text" id="login-name" placeholder="Ton prénom" maxlength="30" autocomplete="off" /></div>
+    <div class="login-field"><input type="text" id="login-city" placeholder="Ta ville (ex: Lyon)" maxlength="40" autocomplete="off" /></div>
+    <button class="login-btn" id="login-btn" disabled onclick="doLogin()">Accéder →</button>
   </div>
 </div>
 
-<div class="shell">
-  <nav class="sidebar">
-    <div class="logo">
-      <div class="logo-title">Suivi KPIs</div>
-      <div class="logo-sub">Recrutement hebdomadaire</div>
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="app-title">Suivi KPIs</span>
+    <div class="week-row">
+      <button class="wk-arrow" onclick="changeWeek(-1)">‹</button>
+      <button class="wk-label" id="wk-label" onclick="openCal()"></button>
+      <button class="wk-arrow" onclick="changeWeek(1)">›</button>
+      <button class="today-btn" onclick="goToday()">Aujourd'hui</button>
     </div>
-    <div class="user-badge" id="user-badge">
-      <div class="user-avatar" id="user-avatar">?</div>
-      <span class="user-name" id="user-name-label">—</span>
-      <div class="user-sync"><span class="sync-dot" id="sync-dot"></span></div>
+  </div>
+  <div class="topbar-right">
+    <div class="sync-pill"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">—</span></div>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()"></button>
+    <div class="me-badge" id="me-badge" onclick="openMyCard()" title="Mon profil">
+      <div class="me-avatar" id="me-avatar">?</div>
+      <span class="me-name" id="me-name">—</span>
     </div>
-    <div class="nav-label">Villes</div>
-    <div class="city-list" id="city-list"></div>
-    <div class="sidebar-foot">
-      <button class="add-city-btn" onclick="openModal()">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
-        Ajouter une ville
-      </button>
-    </div>
-  </nav>
-
-  <main class="main">
-    <div class="topbar">
-      <div>
-        <h1 class="city-name" id="city-name"></h1>
-        <div class="week-row">
-          <button class="wk-arrow" onclick="changeWeek(-1)">‹</button>
-          <button class="wk-label" id="wk-label" onclick="openCalModal()" title="Choisir une semaine"></button>
-          <button class="wk-arrow" onclick="changeWeek(1)">›</button>
-          <button class="today-btn" onclick="goToday()">Aujourd'hui</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="carousel-wrap">
-      <div class="kpi-strip" id="kpi-strip"></div>
-    </div>
-    <div class="carousel-nav">
-      <button class="c-arrow" id="c-prev" aria-label="Précédent">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1 3,5 7,9"/></svg>
-      </button>
-      <button class="c-arrow" id="c-next" aria-label="Suivant">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,1 7,5 3,9"/></svg>
-      </button>
-    </div>
-
-    <div class="section-label">Activité</div>
-    <div class="metric-grid" id="grid-activite"></div>
-
-    <div class="section-label">Résultats</div>
-    <div class="metric-grid" id="grid-resultats"></div>
-
-    <div class="notes-wrap">
-      <div class="section-label">Notes</div>
-      <textarea id="notes" rows="3" placeholder="Observations, relances, points importants…"></textarea>
-    </div>
-
-    <div class="actions">
-      <button class="act-btn" onclick="copyData()">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M2 11V3a2 2 0 0 1 2-2h8"/></svg>
-        Copier
-      </button>
-      <button class="act-btn" onclick="exportCSV()">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v9M5 8l3 3 3-3M3 13h10"/></svg>
-        Exporter semaine
-      </button>
-      <button class="act-btn primary" onclick="exportAllCSV()">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v9M5 8l3 3 3-3M3 13h10"/></svg>
-        Tout exporter
-      </button>
-    </div>
-  </main>
+  </div>
 </div>
 
-<div class="cal-modal-bg" id="cal-modal-bg">
-  <div class="cal-box glass">
-    <div class="cal-header">
-      <h3 id="cal-year-label">2025</h3>
+<!-- Main -->
+<div class="main">
+  <div class="team-header">
+    <span class="team-title">Équipe</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="add-me-btn" onclick="exportGlobalCSV()" style="border-color:var(--border2);color:var(--t2)">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v9M5 8l3 3 3-3M3 13h10"/></svg>
+        Exporter tout
+      </button>
+      <button class="add-me-btn" id="add-me-btn" onclick="openMyCard()" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+        Rejoindre l'équipe
+      </button>
+    </div>
+  </div>
+  <div class="team-grid" id="team-grid"></div>
+</div>
+
+<!-- Detail sheet -->
+<div class="detail-bg" id="detail-bg" onclick="closeDetail(e)">
+  <div class="detail-sheet" id="detail-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-avatar" id="sh-avatar"></div>
+      <div>
+        <div class="sheet-name" id="sh-name"></div>
+        <div class="sheet-city" id="sh-city"></div>
+      </div>
+      <button class="sheet-close" onclick="closeDetail()">×</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="sh-act-btn" onclick="exportMemberCSV()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v9M5 8l3 3 3-3M3 13h10"/></svg>
+        Exporter Excel
+      </button>
+      <button class="sh-act-btn danger" onclick="deleteMember()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,4 4,4 13,4"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M6 7v5M10 7v5"/><path d="M4 4l1 9a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1l1-9"/></svg>
+        Supprimer le membre
+      </button>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-section-label">Activité</div>
+      <div class="sheet-grid" id="sh-grid-act"></div>
+    </div>
+    <div class="sheet-section" style="margin-top:14px">
+      <div class="sheet-section-label">Résultats</div>
+      <div class="sheet-grid" id="sh-grid-res"></div>
+    </div>
+    <div class="sheet-notes">
+      <div class="sheet-section-label" style="margin-bottom:8px">Notes</div>
+      <textarea id="sh-notes" rows="3" placeholder="Observations, relances…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- Calendar -->
+<div class="cal-bg" id="cal-bg" onclick="if(event.target===this)closeCal()">
+  <div class="cal-box">
+    <div class="cal-head">
+      <h3 id="cal-year">2026</h3>
       <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="calShiftYear(-1)">‹</button>
-        <button class="cal-nav-btn" onclick="calShiftYear(1)">›</button>
+        <button class="cal-nav-btn" onclick="calShift(-1)">‹</button>
+        <button class="cal-nav-btn" onclick="calShift(1)">›</button>
       </div>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
-    <div class="cal-footer"><button class="cal-close" onclick="closeCalModal()">Fermer</button></div>
-  </div>
-</div>
-
-<div class="modal-bg" id="modal-bg">
-  <div class="modal glass">
-    <h3>Nouvelle ville</h3>
-    <input type="text" id="city-input" placeholder="Nom de la ville" autocomplete="off" />
-    <div class="modal-row">
-      <button class="m-cancel" onclick="closeModal()">Annuler</button>
-      <button class="m-ok" onclick="confirmCity()">Ajouter</button>
-    </div>
+    <div class="cal-footer"><button class="cal-close-btn" onclick="closeCal()">Fermer</button></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="install-bar" id="install-bar">
-  <span>Installer pour accéder hors ligne</span>
-  <div class="install-bar-btns">
-    <button class="ib-dismiss" onclick="dismissInstall()">Plus tard</button>
-    <button class="ib-go" id="ib-go">Installer</button>
-  </div>
-</div>
 
 <script>
-const CITIES_DEFAULT = ['Rouen','Les Herbiers','Chartres','Toulouse','Lorient'];
+// ── Firebase ──────────────────────────────────────────────────────
+const FB = 'https://suivi-kpi-2cb67-default-rtdb.europe-west1.firebasedatabase.app';
 
+// ── Metrics ───────────────────────────────────────────────────────
 const ACT = [
-  { key:'pr_en_cours',   label:'PR en cours (global)', desc:'Projets de recrutement actifs' },
-  { key:'annonces',      label:'Annonces sourcées',  desc:'Annonces trouvées et contactées' },
-  { key:'nouveaux_pr',   label:'Nouveaux PR',        desc:'Nouvelles offres liées aux sources' },
-  { key:'envois_cv',     label:'Envois de CV',       desc:'CV envoyés sur des offres' },
+  { key:'pr_en_cours',    label:'PR en cours (global)' },
+  { key:'annonces',       label:'Annonces sourcées' },
+  { key:'nouveaux_pr',    label:'Nouveaux PR' },
+  { key:'envois_cv',      label:'Envois de CV' },
 ];
 const RES = [
-  { key:'matching_pr',   label:'Matching PR',        desc:'CV envoyé → recrutement effectif' },
-  { key:'matching_suivi',label:'Matching suivi',     desc:'Candidat trouvé par ses propres moyens' },
-  { key:'ca_signes',     label:'CA signés',          desc:'Contrats d\'apprentissage signés' },
-  { key:'cp_signes',     label:'CP signés',          desc:'Contrats de professionnalisation signés' },
+  { key:'matching_pr',    label:'Matching PR' },
+  { key:'matching_suivi', label:'Matching suivi' },
+  { key:'ca_signes',      label:'CA signés' },
+  { key:'cp_signes',      label:'CP signés' },
 ];
 const ALL = [...ACT, ...RES];
-
-// ── Firebase ──────────────────────────────────────────────────────
-const FB_BASE = 'https://suivi-kpi-2cb67-default-rtdb.europe-west1.firebasedatabase.app';
+const SUMMARY = ['pr_en_cours','envois_cv','matching_pr','ca_signes'];
 
 // ── State ─────────────────────────────────────────────────────────
-let CURRENT_USER = null;
-let S = { cities:[...CITIES_DEFAULT], city:CITIES_DEFAULT[0], week:wkKey(new Date()), data:{} };
+let ME = null; // { key, name, city }
+let currentWeek = wkKey(new Date());
+let teamData = {}; // { userKey: { name, city, data: { week: { metrics } } } }
+let detailKey = null;
 let _saveTimer = null;
+let calYear = new Date().getFullYear();
+let _pollTimer = null;
 
-function fbUrl() {
-  const key = CURRENT_USER.replace(/[^a-zA-Z0-9_-]/g,'_').toLowerCase();
-  return `${FB_BASE}/users/${key}.json`;
+// ── Week helpers (Sam → Ven) ──────────────────────────────────────
+function wkKey(date) {
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const day = d.getDay();
+  d.setDate(d.getDate() - (day === 6 ? 0 : day + 1));
+  const y = d.getFullYear();
+  const s = new Date(y,0,1);
+  const firstSatOff = (6 - s.getDay() + 7) % 7;
+  const firstSat = new Date(y,0,1+firstSatOff);
+  let w = Math.floor((d - firstSat)/(7*86400000)) + 1;
+  if (w < 1) w = 1;
+  return `${y}-SW${String(w).padStart(2,'0')}`;
+}
+function wkSat(wk) {
+  const [y,w] = wk.split('-SW');
+  const s = new Date(+y,0,1);
+  const firstSatOff = (6 - s.getDay() + 7) % 7;
+  const firstSat = new Date(+y,0,1+firstSatOff);
+  const sat = new Date(firstSat);
+  sat.setDate(firstSat.getDate() + (+w-1)*7);
+  return sat;
+}
+function wkLabel(wk) {
+  const sat = wkSat(wk);
+  const fri = new Date(sat); fri.setDate(sat.getDate()+6);
+  const f = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  return `Sem. ${+wk.split('-SW')[1]}  ·  ${f(sat)} – ${f(fri)}`;
+}
+function shiftWk(wk, n) {
+  const sat = wkSat(wk); sat.setDate(sat.getDate()+n*7); return wkKey(sat);
+}
+function weeksInYear(y) {
+  const s = new Date(y,0,1), off = (6-s.getDay()+7)%7;
+  const firstSat = new Date(y,0,1+off);
+  return Math.floor((new Date(y,11,31)-firstSat)/(7*86400000))+1;
 }
 
-function setSyncDot(state) {
+// ── Sync helpers ──────────────────────────────────────────────────
+function setSync(state, text) {
   const d = document.getElementById('sync-dot');
-  if (!d) return;
-  d.className = 'sync-dot' + (state ? ' ' + state : '');
+  const t = document.getElementById('sync-text');
+  if (d) d.className = 'sync-dot' + (state ? ' '+state : '');
+  if (t) t.textContent = text || '';
+}
+
+async function pushMyData() {
+  if (!ME) return;
+  setSync('syncing','Sync…');
+  try {
+    const payload = { name: ME.name, city: ME.city, data: teamData[ME.key]?.data || {} };
+    const res = await fetch(`${FB}/team/${ME.key}.json`, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    setSync(res.ok ? 'ok' : 'err', res.ok ? 'Synchronisé' : 'Erreur');
+    setTimeout(()=>setSync('',''),3000);
+  } catch(e) { setSync('err','Hors ligne'); }
+}
+
+async function fetchTeam() {
+  try {
+    const res = await fetch(`${FB}/team.json`);
+    if (!res.ok) return;
+    const remote = await res.json();
+    if (!remote) return;
+    // Merge remote into teamData
+    Object.entries(remote).forEach(([key, val]) => {
+      if (!teamData[key]) teamData[key] = { name: val.name, city: val.city, data: {} };
+      else { teamData[key].name = val.name; teamData[key].city = val.city; }
+      if (val.data) teamData[key].data = val.data;
+    });
+    renderTeam();
+    if (detailKey) renderDetail(detailKey);
+  } catch(e) {}
+}
+
+function startPolling() {
+  clearInterval(_pollTimer);
+  _pollTimer = setInterval(() => { if (!document.hidden) fetchTeam(); }, 15000);
 }
 
 // ── Login ─────────────────────────────────────────────────────────
-function doLogin() {
-  const val = document.getElementById('login-input').value.trim();
-  if (!val) return;
-  CURRENT_USER = val;
-  localStorage.setItem('sa_user', val);
-  document.getElementById('login-screen').classList.remove('visible');
-  // Update user badge
-  document.getElementById('user-name-label').textContent = val;
-  document.getElementById('user-avatar').textContent = val.charAt(0).toUpperCase();
-  loadFromFirebase();
+function userKey(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9]/g,'_');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const inp = document.getElementById('login-input');
-  inp.addEventListener('input', () => {
-    document.getElementById('login-btn').disabled = inp.value.trim().length < 1;
-  });
-  inp.addEventListener('keydown', e => { if(e.key==='Enter' && inp.value.trim()) doLogin(); });
+function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  const city = document.getElementById('login-city').value.trim();
+  if (!name) return;
+  ME = { key: userKey(name), name, city: city || '—' };
+  localStorage.setItem('me_v2', JSON.stringify(ME));
+  document.getElementById('login-screen').classList.remove('on');
+  initMe();
+  // Create my slot if not exists
+  if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
+  else { teamData[ME.key].name = ME.name; teamData[ME.key].city = ME.city; }
+  pushMyData();
+  fetchTeam().then(() => renderTeam());
+  startPolling();
+}
 
-  // Auto-login if already known
-  const saved = localStorage.getItem('sa_user');
-  if (saved) {
-    CURRENT_USER = saved;
-    document.getElementById('user-name-label').textContent = saved;
-    document.getElementById('user-avatar').textContent = saved.charAt(0).toUpperCase();
-    loadFromFirebase();
-  } else {
-    document.getElementById('login-screen').classList.add('visible');
+function initMe() {
+  document.getElementById('me-avatar').textContent = ME.name.charAt(0).toUpperCase();
+  document.getElementById('me-name').textContent = ME.name;
+  document.getElementById('add-me-btn').style.display = 'none';
+}
+
+// ── Get data ──────────────────────────────────────────────────────
+function getMemberWeek(key, week) {
+  if (!teamData[key]) return null;
+  if (!teamData[key].data) teamData[key].data = {};
+  if (!teamData[key].data[week]) {
+    teamData[key].data[week] = {};
+    ALL.forEach(m => { teamData[key].data[week][m.key] = 0; });
+    teamData[key].data[week]._notes = '';
   }
+  return teamData[key].data[week];
+}
+
+// ── Render team grid ──────────────────────────────────────────────
+const COLORS = ['alt0','alt1','alt2','alt3','alt4','alt5','alt6','alt7'];
+function colorFor(key) {
+  let h = 0; for (let c of key) h = (h*31+c.charCodeAt(0))%COLORS.length;
+  return COLORS[h];
+}
+
+function renderTeam() {
+  document.getElementById('wk-label').textContent = wkLabel(currentWeek);
+  const grid = document.getElementById('team-grid');
+  const keys = Object.keys(teamData).sort();
+  if (!keys.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="big">👥</div><p>Personne encore.<br>Sois le premier à rejoindre !</p></div>';
+    return;
+  }
+  grid.innerHTML = '';
+  keys.forEach((key, idx) => {
+    const m = teamData[key];
+    const d = getMemberWeek(key, currentWeek);
+    const isMe = ME && key === ME.key;
+    const col = colorFor(key);
+    const initial = (m.name||'?').charAt(0).toUpperCase();
+
+    // Summary: PR, CV, Matching, Contrats
+    const summaryMetrics = [
+      { label: 'PR en cours', val: d.pr_en_cours||0 },
+      { label: 'CV envoyés',  val: d.envois_cv||0 },
+      { label: 'Matchings',   val: (d.matching_pr||0)+(d.matching_suivi||0) },
+      { label: 'Contrats',    val: (d.ca_signes||0)+(d.cp_signes||0) },
+    ];
+
+    const card = document.createElement('div');
+    card.className = 'member-card' + (isMe ? ' is-me' : '');
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-avatar ${col}">${initial}</div>
+        <div class="card-info">
+          <div class="card-name">${m.name}</div>
+          <div class="card-city">${m.city}</div>
+        </div>
+        ${isMe ? '<span class="card-me-tag">Moi</span>' : ''}
+      </div>
+      <div class="card-metrics">
+        ${summaryMetrics.map(s=>`
+          <div class="card-metric">
+            <div class="cm-label">${s.label}</div>
+            <div class="cm-value">${s.val}</div>
+          </div>`).join('')}
+      </div>
+      <div class="card-footer"><span class="edit-hint">Appuyer pour modifier →</span></div>`;
+    card.onclick = () => openDetail(key);
+    grid.appendChild(card);
+  });
+}
+
+// ── Detail sheet ──────────────────────────────────────────────────
+function openDetail(key) {
+  detailKey = key;
+  renderDetail(key);
+  document.getElementById('detail-bg').classList.add('on');
+}
+function closeDetail() {
+  document.getElementById('detail-bg').classList.remove('on');
+  detailKey = null;
+}
+document.getElementById('detail-bg').addEventListener('click', e => {
+  if (e.target === document.getElementById('detail-bg')) closeDetail();
 });
 
-async function loadFromFirebase() {
-  // Show local cache first for instant render
-  try {
-    const local = localStorage.getItem('sa_v3_' + CURRENT_USER);
-    if (local) { S = JSON.parse(local); normalizeS(); render(); }
-  } catch(e) {}
+function renderDetail(key) {
+  const m = teamData[key];
+  if (!m) return;
+  const d = getMemberWeek(key, currentWeek);
+  const col = colorFor(key);
 
-  setSyncDot('syncing');
-  try {
-    const res = await fetch(fbUrl());
-    if (res.ok) {
-      const remote = await res.json();
-      if (remote && remote.cities) {
-        const city = S.city; const week = S.week;
-        S = remote; normalizeS();
-        if (S.cities.includes(city)) S.city = city;
-        S.week = week;
-        localStorage.setItem('sa_v3_' + CURRENT_USER, JSON.stringify(S));
-      }
-      setSyncDot('ok');
-    } else { setSyncDot('err'); }
-  } catch(e) { setSyncDot('err'); }
-  render();
-
-  // Poll every 30s
-  setInterval(async () => {
-    if (document.hidden || !CURRENT_USER) return;
-    try {
-      const res = await fetch(fbUrl());
-      if (!res.ok) return;
-      const remote = await res.json();
-      if (!remote?.cities) return;
-      const city = S.city; const week = S.week;
-      S = remote; normalizeS();
-      if (S.cities.includes(city)) S.city = city;
-      S.week = week;
-      localStorage.setItem('sa_v3_' + CURRENT_USER, JSON.stringify(S));
-      setSyncDot('ok');
-      render();
-    } catch(e) { setSyncDot('err'); }
-  }, 30000);
-}
-
-function normalizeS() {
-  if (!S.cities?.length) S.cities = [...CITIES_DEFAULT];
-  if (!S.cities.includes(S.city)) S.city = S.cities[0];
-  if (!S.week) S.week = wkKey(new Date());
-}
-
-function load() { /* handled by loadFromFirebase */ }
-
-function save() {
-  const n = document.getElementById('notes');
-  if (n) getD(S.city, S.week)._notes = n.value;
-  if (!CURRENT_USER) return;
-  localStorage.setItem('sa_v3_' + CURRENT_USER, JSON.stringify(S));
-  clearTimeout(_saveTimer);
-  setSyncDot('syncing');
-  _saveTimer = setTimeout(async () => {
-    try {
-      const res = await fetch(fbUrl(), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(S)
-      });
-      setSyncDot(res.ok ? 'ok' : 'err');
-    } catch(e) { setSyncDot('err'); }
-  }, 1000);
-}
-function getD(city, week) {
-  if (!S.data[week]) S.data[week] = {};
-  if (!S.data[week][city]) { const o = {}; ALL.forEach(m => o[m.key]=0); o._notes=''; S.data[week][city] = o; }
-  return S.data[week][city];
-}
-
-// ── Week helpers (Sam → Ven) ──────────────────────────────────────
-// La semaine va du SAMEDI au VENDREDI.
-// On utilise le samedi comme jour de référence pour la clé.
-function wkKey(date) {
-  // Ramène au samedi de la semaine courante (sam=6, on recule si nécessaire)
-  const d = new Date(date); d.setHours(0,0,0,0);
-  const day = d.getDay(); // 0=dim,1=lun,...,6=sam
-  // Ramène au samedi précédent (ou aujourd'hui si samedi)
-  const toSat = (day === 6) ? 0 : -(day + 1);
-  d.setDate(d.getDate() + toSat);
-  // Génère une clé unique basée sur l'année et numéro de semaine à partir du samedi
-  const y = d.getFullYear();
-  const startOfYear = new Date(y, 0, 1);
-  // Premier samedi de l'année
-  const firstSatDay = startOfYear.getDay();
-  const daysToFirstSat = (6 - firstSatDay + 7) % 7;
-  const firstSat = new Date(y, 0, 1 + daysToFirstSat);
-  let weekNum = Math.floor((d - firstSat) / (7 * 86400000)) + 1;
-  if (weekNum < 1) { weekNum = 1; }
-  return `${y}-SW${String(weekNum).padStart(2,'0')}`;
-}
-
-function wkSaturday(wk) {
-  // Retrouve le samedi à partir de la clé
-  const [y, w] = wk.split('-SW');
-  const startOfYear = new Date(+y, 0, 1);
-  const firstSatDay = startOfYear.getDay();
-  const daysToFirstSat = (6 - firstSatDay + 7) % 7;
-  const firstSat = new Date(+y, 0, 1 + daysToFirstSat);
-  const sat = new Date(firstSat);
-  sat.setDate(firstSat.getDate() + (+w - 1) * 7);
-  return sat;
-}
-
-function wkLabel(wk) {
-  const sat = wkSaturday(wk);
-  const fri = new Date(sat); fri.setDate(sat.getDate() + 6);
-  const f = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  const wNum = wk.split('-SW')[1];
-  return `Sem. ${+wNum}  ·  ${f(sat)} – ${f(fri)}`;
-}
-
-function shiftWk(wk, n) {
-  const sat = wkSaturday(wk);
-  sat.setDate(sat.getDate() + n * 7);
-  return wkKey(sat);
-}
-
-// ── KPI Carousel ──────────────────────────────────────────────────
-// Pure CSS scroll-snap + native touch/mouse wheel — no JS animation, no drag hack.
-// Mouse drag replaced by horizontal wheel redirect for clean UX.
-
-// ── KPI Carousel — natif, fluide, sans bug ───────────────────────
-// Scroll horizontal natif + scroll-snap CSS. Les flèches font scrollBy
-// d'une carte. À la fin/début, on saute silencieusement à l'autre bout
-// (même position visuelle grâce aux clones de chaque côté).
-
-function buildKPI() {
-  const d = getD(S.city, S.week);
-  const strip = document.getElementById('kpi-strip');
-  strip.removeAttribute('style');
-  strip.innerHTML = '';
-  // Clone de fin + cartes réelles + clone de début  → boucle visuelle
-  const makeCard = (m, withId) => {
-    const card = document.createElement('div');
-    card.className = 'kpi-card';
-    const idAttr = withId ? ` id="kv-${m.key}"` : '';
-    card.innerHTML = `<div class="kl">${m.label}</div><div class="kv"${idAttr}>${d[m.key]||0}</div>`;
-    return card;
+  document.getElementById('sh-avatar').textContent = m.name.charAt(0).toUpperCase();
+  document.getElementById('sh-avatar').className = `sheet-avatar ${col}`;
+  document.getElementById('sh-name').textContent = m.name;
+  document.getElementById('sh-city').textContent = m.city;
+  document.getElementById('sh-notes').value = d._notes || '';
+  document.getElementById('sh-notes').oninput = () => {
+    d._notes = document.getElementById('sh-notes').value;
+    scheduleSave();
   };
-  // Dernier clone (affiché quand on défile à gauche depuis le début)
-  ALL.slice(-4).forEach(m => strip.appendChild(makeCard(m, false)));
-  // Cartes réelles
-  ALL.forEach(m => strip.appendChild(makeCard(m, true)));
-  // Premier clone (affiché quand on arrive à la fin)
-  ALL.slice(0, 4).forEach(m => strip.appendChild(makeCard(m, false)));
 
-  // Positionner sur la 1ère vraie carte (après les 4 clones de fin)
-  requestAnimationFrame(() => {
-    const cw = strip.querySelector('.kpi-card').offsetWidth + 8;
-    strip.scrollLeft = cw * 4;
-  });
-  initCarousel();
+  renderSheetGrid('sh-grid-act', ACT, key, d);
+  renderSheetGrid('sh-grid-res', RES, key, d);
 }
 
-let _scrolling = false;
-function stepCarousel(dir) {
-  if (_scrolling) return;
-  const strip = document.getElementById('kpi-strip');
-  const cw = strip.querySelector('.kpi-card').offsetWidth + 8;
-  const realStart = cw * 4;                        // offset de la 1ère vraie carte
-  const realEnd   = realStart + cw * ALL.length;   // offset après la dernière vraie
-  let next = strip.scrollLeft + cw * dir;
-
-  // Détection boucle : si on sort de la zone réelle, on saute sans animation
-  if (next < realStart - cw * 0.5) {
-    strip.style.scrollBehavior = 'auto';
-    strip.scrollLeft = realEnd - cw;
-    strip.style.scrollBehavior = '';
-    next = strip.scrollLeft - cw;
-  } else if (next > realEnd - cw * 0.5) {
-    strip.style.scrollBehavior = 'auto';
-    strip.scrollLeft = realStart;
-    strip.style.scrollBehavior = '';
-    next = strip.scrollLeft + cw;
-  }
-
-  _scrolling = true;
-  strip.scrollTo({ left: next, behavior: 'smooth' });
-  setTimeout(() => { _scrolling = false; }, 420);
-}
-
-function initCarousel() {
-  const strip = document.getElementById('kpi-strip');
-  if (strip._init) return;
-  strip._init = true;
-
-  document.getElementById('c-prev').onclick = () => stepCarousel(-1);
-  document.getElementById('c-next').onclick = () => stepCarousel(1);
-
-  strip.addEventListener('wheel', e => {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-    e.preventDefault();
-    stepCarousel(e.deltaY > 0 ? 1 : -1);
-  }, { passive: false });
-
-  let tx0 = null;
-  strip.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
-  strip.addEventListener('touchend', e => {
-    if (tx0 === null) return;
-    const dx = e.changedTouches[0].clientX - tx0;
-    if (Math.abs(dx) > 40) stepCarousel(dx < 0 ? 1 : -1);
-    tx0 = null;
-  }, { passive: true });
-}
-
-function updateKPIValues() {
-  const d = getD(S.city, S.week);
-  ALL.forEach(m => {
-    const el = document.getElementById('kv-'+m.key);
-    if (el) el.textContent = d[m.key]||0;
-  });
-}
-
-// ── Metric grids ──────────────────────────────────────────────────
-function buildGrid(id, metrics) {
-  const d = getD(S.city, S.week);
-  const g = document.getElementById(id);
+function renderSheetGrid(containerId, metrics, key, d) {
+  const g = document.getElementById(containerId);
   g.innerHTML = '';
   metrics.forEach(m => {
-    const c = document.createElement('div');
-    c.className = 'm-card';
-    c.innerHTML = `
-      <div class="m-left">
-        <div class="m-name">${m.label}</div>
-        <div class="m-val" id="v-${m.key}">${d[m.key]||0}</div>
+    const div = document.createElement('div');
+    div.className = 'sheet-metric';
+    div.innerHTML = `
+      <div>
+        <div class="sm-label">${m.label}</div>
+        <div class="sm-val" id="sv-${key}-${m.key}">${d[m.key]||0}</div>
       </div>
-      <div class="m-btns">
-        <button class="m-btn" onclick="adj('${m.key}',1)">+</button>
-        <button class="m-btn" onclick="adj('${m.key}',-1)">−</button>
+      <div class="sm-btns">
+        <button class="sm-btn" onclick="adj('${key}','${m.key}',1)">+</button>
+        <button class="sm-btn" onclick="adj('${key}','${m.key}',-1)">−</button>
       </div>`;
-    g.appendChild(c);
+    g.appendChild(div);
   });
 }
 
-// ── Sidebar ───────────────────────────────────────────────────────
-function buildSidebar() {
-  const list = document.getElementById('city-list');
-  list.innerHTML = '';
-  S.cities.forEach(city => {
-    const b = document.createElement('button');
-    b.className = 'city-btn' + (city===S.city?' active':'');
-    const span = document.createElement('span');
-    span.textContent = city;
-    b.appendChild(span);
-    b.onclick = (e) => { if (e.target.closest('.city-del')) return; S.city = city; render(); };
-    // Delete button on every city
-      const del = document.createElement('button');
-      del.className = 'city-del';
-      del.title = 'Supprimer';
-      del.innerHTML = '×';
-      del.onclick = (e) => { e.stopPropagation(); deleteCity(city); };
-      b.appendChild(del);
-    list.appendChild(b);
-  });
+function adj(key, metric, delta) {
+  const d = getMemberWeek(key, currentWeek);
+  d[metric] = Math.max(0, (d[metric]||0) + delta);
+  const el = document.getElementById(`sv-${key}-${metric}`);
+  if (el) el.textContent = d[metric];
+  renderTeam();
+  scheduleSave(key);
 }
 
-function deleteCity(city) {
-  if (!confirm(`Supprimer "${city}" ? Toutes ses données seront perdues.`)) return;
-  Object.keys(S.data||{}).forEach(wk => { if(S.data[wk]) delete S.data[wk][city]; });
-  S.cities = S.cities.filter(c => c !== city);
-  if (S.city === city) S.city = S.cities[0] || '';
-  save(); render();
+function scheduleSave(key) {
+  const targetKey = key || (ME ? ME.key : null);
+  if (!targetKey || !ME) return;
+  // Always push MY data; if editing someone else, also push their data
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(async () => {
+    // Push my data
+    await pushMyData();
+    // If editing someone else, push their data too
+    if (targetKey !== ME.key && teamData[targetKey]) {
+      try {
+        const payload = { name: teamData[targetKey].name, city: teamData[targetKey].city, data: teamData[targetKey].data };
+        await fetch(`${FB}/team/${targetKey}.json`, {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+      } catch(e) {}
+    }
+  }, 800);
 }
 
-// ── Render ────────────────────────────────────────────────────────
-function render() {
-  document.getElementById('city-name').textContent = S.city;
-  document.getElementById('wk-label').textContent   = wkLabel(S.week);
-  buildSidebar();
-  buildKPI();
-  buildGrid('grid-activite',  ACT);
-  buildGrid('grid-resultats', RES);
-  const d = getD(S.city, S.week);
-  document.getElementById('notes').value = d._notes||'';
-  document.getElementById('notes').oninput = save;
+function openMyCard() {
+  if (ME && teamData[ME.key]) openDetail(ME.key);
 }
 
-// ── Controls ──────────────────────────────────────────────────────
-function adj(key, delta) {
-  const d = getD(S.city, S.week);
-  d[key] = Math.max(0, (d[key]||0)+delta);
-  document.getElementById('v-'+key).textContent = d[key];
-  save();
-  updateKPIValues();
-}
-function changeWeek(n) { save(); S.week = shiftWk(S.week,n); render(); }
-function goToday()     { save(); S.week = wkKey(new Date()); render(); }
+// ── Week navigation ───────────────────────────────────────────────
+function changeWeek(n) { currentWeek = shiftWk(currentWeek, n); renderTeam(); if(detailKey) renderDetail(detailKey); }
+function goToday() { currentWeek = wkKey(new Date()); renderTeam(); if(detailKey) renderDetail(detailKey); }
 
-// ── Modal ─────────────────────────────────────────────────────────
-function openModal()  { document.getElementById('modal-bg').classList.add('open'); const i=document.getElementById('city-input'); i.value=''; setTimeout(()=>i.focus(),50); }
-function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
-function confirmCity() {
-  const v = document.getElementById('city-input').value.trim();
-  if (!v) return;
-  if (!S.cities.includes(v)) { S.cities.push(v); S.city=v; save(); render(); }
-  closeModal();
-}
-document.getElementById('city-input').addEventListener('keydown', e => { if(e.key==='Enter') confirmCity(); });
-document.getElementById('modal-bg').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
-
-// ── Calendar picker ──────────────────────────────────────────────
-let calYear = new Date().getFullYear();
-
-function weeksInYear(y) {
-  // Compte les semaines sam→ven dans l'année
-  const startOfYear = new Date(y, 0, 1);
-  const firstSatDay = startOfYear.getDay();
-  const daysToFirstSat = (6 - firstSatDay + 7) % 7;
-  const firstSat = new Date(y, 0, 1 + daysToFirstSat);
-  const lastDay = new Date(y, 11, 31);
-  return Math.floor((lastDay - firstSat) / (7 * 86400000)) + 1;
-}
-
-function openCalModal() {
-  calYear = parseInt(S.week.split('-SW')[0]) || new Date().getFullYear();
+// ── Calendar ──────────────────────────────────────────────────────
+function openCal() {
+  calYear = parseInt(currentWeek.split('-SW')[0]) || new Date().getFullYear();
   renderCalGrid();
-  document.getElementById('cal-modal-bg').classList.add('open');
-  setTimeout(() => {
-    const sel = document.querySelector('.cal-wk.selected');
-    if (sel) sel.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  }, 60);
+  document.getElementById('cal-bg').classList.add('on');
+  setTimeout(() => { const s = document.querySelector('.cal-wk.selected'); if(s) s.scrollIntoView({block:'center'}); }, 80);
 }
-function closeCalModal() { document.getElementById('cal-modal-bg').classList.remove('open'); }
-function calShiftYear(d) { calYear += d; renderCalGrid(); }
-
+function closeCal() { document.getElementById('cal-bg').classList.remove('on'); }
+function calShift(n) { calYear += n; renderCalGrid(); }
 function renderCalGrid() {
-  document.getElementById('cal-year-label').textContent = calYear;
-  const grid = document.getElementById('cal-grid');
-  grid.innerHTML = '';
-  const totalWks = weeksInYear(calYear);
+  document.getElementById('cal-year').textContent = calYear;
+  const grid = document.getElementById('cal-grid'); grid.innerHTML = '';
   const todayWk = wkKey(new Date());
-  for (let w = 1; w <= totalWks; w++) {
+  const total = weeksInYear(calYear);
+  for (let w=1; w<=total; w++) {
     const wk = `${calYear}-SW${String(w).padStart(2,'0')}`;
-    const sat = wkSaturday(wk);
+    const sat = wkSat(wk);
     const fri = new Date(sat); fri.setDate(sat.getDate()+6);
-    const fmt = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const f = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
     const btn = document.createElement('button');
-    btn.className = 'cal-wk' + (wk===S.week?' selected':'') + (wk===todayWk?' current-week':'');
-    btn.innerHTML = `<span style="color:var(--t3);font-size:11px">S${+w}</span>  ${fmt(sat)} – ${fmt(fri)}`;
-    btn.onclick = () => { S.week = wk; save(); render(); closeCalModal(); };
+    btn.className = 'cal-wk'+(wk===currentWeek?' selected':'')+(wk===todayWk?' current':'');
+    btn.innerHTML = `<span style="color:var(--t3);font-size:10px">S${w} </span>${f(sat)} – ${f(fri)}`;
+    btn.onclick = () => { currentWeek = wk; renderTeam(); if(detailKey) renderDetail(detailKey); closeCal(); };
     grid.appendChild(btn);
   }
 }
 
-document.getElementById('cal-modal-bg').addEventListener('click', e => { if(e.target===e.currentTarget) closeCalModal(); });
-
-// ── Toast ─────────────────────────────────────────────────────────
-function showToast(msg) {
-  const t = document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
-}
 
 // ── Export ────────────────────────────────────────────────────────
-function copyData() {
-  save();
-  const d = getD(S.city, S.week);
-  let txt = `${S.city} — ${wkLabel(S.week)}\n\n`;
-  ALL.forEach(m => { txt += `${m.label}: ${d[m.key]||0}\n`; });
-  if (d._notes) txt += `\nNotes : ${d._notes}`;
-  navigator.clipboard.writeText(txt).then(()=>showToast('Copié !')).catch(()=>showToast('Erreur'));
+function dlCSV(content, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿'+content], {type:'text/csv;charset=utf-8;'}));
+  a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  toast('Fichier exporté !');
 }
-function buildCSV(all) {
-  save();
-  const rows = [['Semaine','Ville',...ALL.map(m=>m.label),'Notes'].join(';')];
-  const weeks = all ? Object.keys(S.data).sort() : [S.week];
-  weeks.forEach(wk => {
-    S.cities.forEach(city => {
-      const d = S.data[wk]?.[city];
-      if (!d || (!ALL.some(m=>(d[m.key]||0)>0) && !d._notes)) return;
-      rows.push([wk, city, ...ALL.map(m=>d[m.key]||0), (d._notes||'').replace(/;|\n/g,' ')].join(';'));
+
+function exportMemberCSV() {
+  if (!detailKey || !teamData[detailKey]) return;
+  const m = teamData[detailKey];
+  const headers = ['Semaine', ...ALL.map(x=>x.label), 'Notes'];
+  const rows = [headers.join(';')];
+  Object.keys(m.data||{}).sort().forEach(wk => {
+    const d = m.data[wk];
+    if (!ALL.some(x=>(d[x.key]||0)>0) && !d._notes) return;
+    rows.push([wk, ...ALL.map(x=>d[x.key]||0), (d._notes||'').replace(/;|
+/g,' ')].join(';'));
+  });
+  dlCSV(rows.join('
+'), `${m.name}_${m.city}_kpis.csv`);
+}
+
+function exportGlobalCSV() {
+  const headers = ['Semaine', 'Prénom', 'Ville', ...ALL.map(x=>x.label), 'Notes'];
+  const rows = [headers.join(';')];
+  Object.values(teamData).forEach(m => {
+    Object.keys(m.data||{}).sort().forEach(wk => {
+      const d = m.data[wk];
+      if (!ALL.some(x=>(d[x.key]||0)>0) && !d._notes) return;
+      rows.push([wk, m.name, m.city, ...ALL.map(x=>d[x.key]||0), (d._notes||'').replace(/;|
+/g,' ')].join(';'));
     });
   });
-  return rows.join('\n');
-}
-function dl(content, name) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['\uFEFF'+content],{type:'text/csv;charset=utf-8;'}));
-  a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  showToast('Exporté !');
-}
-function exportCSV()    { dl(buildCSV(false), `suivi_${S.week}.csv`); }
-function exportAllCSV() { dl(buildCSV(true),  'suivi_alternance_complet.csv'); }
-
-// ── PWA install ───────────────────────────────────────────────────
-let dP = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); dP = e;
-  if (!localStorage.getItem('ib_off')) document.getElementById('install-bar').classList.add('on');
-});
-document.getElementById('ib-go').onclick = () => { if(dP){ dP.prompt(); dP.userChoice.then(()=>{ dP=null; dismissInstall(); }); } };
-function dismissInstall() { document.getElementById('install-bar').classList.remove('on'); localStorage.setItem('ib_off','1'); }
-window.addEventListener('appinstalled', ()=>{ dismissInstall(); showToast('Application installée !'); });
-
-// ── Service Worker ────────────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  const sw = `const C='sa-v2';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/']).catch(()=>{})));self.skipWaiting();});self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>new Response('',{status:503})))));`;
-  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+  dlCSV(rows.join('
+'), `equipe_kpis_${currentWeek}.csv`);
 }
 
-// ── Dark mode toggle ─────────────────────────────────────────────
-const MOON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-const SUN_SVG  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+// ── Delete member ─────────────────────────────────────────────────
+async function deleteMember() {
+  if (!detailKey) return;
+  const m = teamData[detailKey];
+  if (!confirm(`Supprimer ${m.name} (${m.city}) et toutes ses données ?`)) return;
+  // If deleting myself, clear local storage
+  if (ME && detailKey === ME.key) {
+    localStorage.removeItem('me_v2');
+    ME = null;
+  }
+  try {
+    await fetch(`${FB}/team/${detailKey}.json`, { method: 'DELETE' });
+  } catch(e) {}
+  delete teamData[detailKey];
+  closeDetail();
+  renderTeam();
+  toast('Membre supprimé');
+  // If deleted self, reload to show login
+  if (!ME) setTimeout(() => location.reload(), 1500);
+}
 
+// ── Dark mode ─────────────────────────────────────────────────────
+const MOON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+const SUN  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 function applyTheme(dark) {
   document.documentElement.classList.toggle('dark', dark);
-  document.getElementById('theme-toggle').innerHTML = dark ? SUN_SVG : MOON_SVG;
+  document.getElementById('theme-btn').innerHTML = dark ? SUN : MOON;
   localStorage.setItem('theme', dark ? 'dark' : 'light');
 }
-function toggleTheme() {
-  applyTheme(!document.documentElement.classList.contains('dark'));
-}
-function initTheme() {
-  const saved = localStorage.getItem('theme');
-  applyTheme(saved === 'dark');
+function toggleTheme() { applyTheme(!document.documentElement.classList.contains('dark')); }
+
+// ── Toast ─────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2200);
 }
 
 // ── Init ──────────────────────────────────────────────────────────
-initTheme();
+applyTheme(localStorage.getItem('theme') === 'dark');
+
+// Login form validation
+const li = document.getElementById('login-input') || document.getElementById('login-name');
+['login-name','login-city'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    const n = document.getElementById('login-name').value.trim();
+    document.getElementById('login-btn').disabled = !n;
+  });
+});
+document.getElementById('login-name').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-city').focus(); });
+document.getElementById('login-city').addEventListener('keydown', e => { if(e.key==='Enter' && document.getElementById('login-name').value.trim()) doLogin(); });
+
+// Auto-login
+const savedMe = localStorage.getItem('me_v2');
+if (savedMe) {
+  try {
+    ME = JSON.parse(savedMe);
+    initMe();
+    fetchTeam().then(() => {
+      if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
+      else { teamData[ME.key].name = ME.name; teamData[ME.key].city = ME.city; }
+      pushMyData();
+      renderTeam();
+    });
+    startPolling();
+  } catch(e) { document.getElementById('login-screen').classList.add('on'); }
+} else {
+  document.getElementById('login-screen').classList.add('on');
+}
 </script>
 </body>
 </html>
