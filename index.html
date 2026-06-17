@@ -3,42 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f2f2f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Suivi KPIs">
 <title>Suivi KPIs</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:           #ffffff;
-  --bg2:          #f5f5f7;
-  --bg3:          #e8e8ed;
-  --t1:           #1d1d1f;
-  --t2:           #6e6e73;
-  --t3:           #aeaeb2;
-  --border:       rgba(0,0,0,0.08);
-  --border2:      rgba(0,0,0,0.14);
-  --accent:       #1d1d1f;
-  --accent-fg:    #ffffff;
-  --r1: 10px; --r2: 14px; --r3: 18px;
+  --bg:        #f2f2f7;
+  --bg2:       #ffffff;
+  --bg3:       #e5e5ea;
+  --t1:        #1d1d1f;
+  --t2:        #6e6e73;
+  --t3:        #aeaeb2;
+  --border:    rgba(0,0,0,0.07);
+  --border2:   rgba(0,0,0,0.12);
+  --accent:    #0071e3;
+  --accent-fg: #ffffff;
+  --r1: 10px; --r2: 14px; --r3: 20px;
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg:        #1c1c1e;
-    --bg2:       #2c2c2e;
-    --bg3:       #3a3a3c;
-    --t1:        #f5f5f7;
-    --t2:        #98989d;
-    --t3:        #545458;
-    --border:    rgba(255,255,255,0.08);
-    --border2:   rgba(255,255,255,0.14);
-    --accent:    #f5f5f7;
-    --accent-fg: #1c1c1e;
-  }
+.dark {
+  --bg:        #000000;
+  --bg2:       #1c1c1e;
+  --bg3:       #2c2c2e;
+  --t1:        #f5f5f7;
+  --t2:        #98989d;
+  --t3:        #48484a;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.14);
+  --accent:    #0a84ff;
+  --accent-fg: #ffffff;
 }
 
 html, body { font-family: var(--font); background: var(--bg); color: var(--t1); min-height: 100vh; -webkit-font-smoothing: antialiased; }
@@ -73,7 +71,7 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
   user-select: none; -webkit-user-select: none;
 }
 .city-btn:hover  { background: var(--bg3); color: var(--t1); }
-.city-btn.active { background: var(--accent); color: var(--accent-fg); font-weight: 500; }
+.city-btn.active { background: var(--accent); color: var(--accent-fg); font-weight: 500; border-radius: var(--r1); }
 .city-del {
   width: 18px; height: 18px; border-radius: 50%; border: none;
   background: transparent; color: var(--t3); cursor: pointer;
@@ -94,7 +92,7 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
 .sidebar-foot { margin-top: auto; }
 
 /* ── Main ── */
-.main { flex: 1; padding: 32px 36px 48px; max-width: 780px; }
+.main { flex: 1; padding: 32px 36px 48px; max-width: 780px; background: var(--bg); }
 
 /* Top bar */
 .topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 30px; }
@@ -102,35 +100,25 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
 .week-row  { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
 .wk-arrow {
   width: 28px; height: 28px; border-radius: 50%;
-  background: rgba(255,255,255,0.4);
-  backdrop-filter: blur(16px) saturate(1.6);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
-  border: 0.5px solid rgba(255,255,255,0.45);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 0.5px 0 rgba(255,255,255,0.6);
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   color: var(--t2); cursor: pointer; font-size: 15px;
   display: flex; align-items: center; justify-content: center; transition: all 0.15s;
   user-select: none;
 }
-.wk-arrow:hover { background: rgba(255,255,255,0.62); color: var(--t1); }
-@media (prefers-color-scheme: dark) {
-  .wk-arrow { background: rgba(60,60,65,0.5); border-color: rgba(255,255,255,0.1); }
-  .wk-arrow:hover { background: rgba(80,80,85,0.65); }
-}
+.wk-arrow:hover { background: var(--bg3); color: var(--t1); }
+
 .wk-label {
   font-size: 13px; color: var(--t2); letter-spacing: -0.1px;
   border-radius: 20px; padding: 5px 14px; cursor: pointer;
-  background: rgba(255,255,255,0.45);
-  backdrop-filter: blur(20px) saturate(1.8);
-  -webkit-backdrop-filter: blur(20px) saturate(1.8);
-  border: 0.5px solid rgba(255,255,255,0.5);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06), inset 0 0.5px 0 rgba(255,255,255,0.7);
+  background: var(--bg2);
+  border: 0.5px solid var(--border2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: all 0.15s;
 }
-.wk-label:hover { background: rgba(255,255,255,0.62); }
-@media (prefers-color-scheme: dark) {
-  .wk-label { background: rgba(60,60,65,0.5); border-color: rgba(255,255,255,0.1); box-shadow: 0 2px 12px rgba(0,0,0,0.25), inset 0 0.5px 0 rgba(255,255,255,0.06); }
-  .wk-label:hover { background: rgba(80,80,85,0.6); }
-}
+.wk-label:hover { background: var(--bg3); }
+
 .today-btn {
   font-size: 12px; color: var(--t3);
   border: 0.5px solid var(--border); border-radius: 20px;
@@ -165,8 +153,9 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
 .kpi-card {
   flex: 0 0 148px; scroll-snap-align: start;
   background: var(--bg2); border-radius: var(--r2);
-  padding: 14px 16px;
-  pointer-events: none; /* avoid accidental text selection */
+  padding: 14px 16px; border: 0.5px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  pointer-events: none;
 }
 .kpi-card .kl { font-size: 11px; font-weight: 400; color: var(--t3); margin-bottom: 8px; letter-spacing: -0.05px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kpi-card .kv { font-size: 28px; font-weight: 700; color: var(--t1); line-height: 1; letter-spacing: -1px; }
@@ -192,31 +181,32 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
 /* ── Metric grid ── */
 .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .m-card {
-  background: var(--bg); border: 0.5px solid var(--border);
+  background: var(--bg2); border: 0.5px solid var(--border);
   border-radius: var(--r2); padding: 16px 18px;
   display: flex; align-items: center; justify-content: space-between;
-  transition: border-color 0.15s;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
-.m-card:hover { border-color: var(--border2); }
+.m-card:hover { border-color: var(--border2); box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
 .m-left { flex: 1; min-width: 0; }
 .m-name { font-size: 12.5px; font-weight: 400; color: var(--t2); margin-bottom: 5px; letter-spacing: -0.1px; }
 .m-val  { font-size: 28px; font-weight: 700; color: var(--t1); line-height: 1; letter-spacing: -1px; }
 .m-btns { display: flex; flex-direction: column; gap: 5px; margin-left: 14px; }
 .m-btn {
   width: 28px; height: 28px; border-radius: 8px;
-  border: 0.5px solid var(--border2); background: var(--bg2);
-  color: var(--t1); cursor: pointer; font-size: 16px; font-weight: 300;
+  border: 0.5px solid var(--border2); background: var(--bg);
+  color: var(--t2); cursor: pointer; font-size: 16px; font-weight: 300;
   display: flex; align-items: center; justify-content: center;
-  transition: background 0.1s; user-select: none; -webkit-user-select: none;
+  transition: all 0.1s; user-select: none; -webkit-user-select: none;
 }
-.m-btn:hover  { background: var(--bg3); }
+.m-btn:hover  { background: var(--accent); color: #fff; border-color: transparent; }
 .m-btn:active { transform: scale(0.91); }
 
 /* ── Notes ── */
 .notes-wrap { margin-top: 24px; }
 .notes-wrap textarea {
   width: 100%; padding: 12px 14px; border-radius: var(--r2);
-  border: 0.5px solid var(--border); background: var(--bg2);
+  border: 0.5px solid var(--border); background: var(--bg2); box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   color: var(--t1); font-family: var(--font); font-size: 13.5px; letter-spacing: -0.1px;
   line-height: 1.6; resize: none; outline: none; transition: border-color 0.15s;
 }
@@ -229,13 +219,13 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
   display: flex; align-items: center; gap: 6px;
   padding: 8px 16px; border-radius: var(--r1);
   font-size: 13px; font-family: var(--font); letter-spacing: -0.1px;
-  cursor: pointer; transition: background 0.12s;
-  border: 0.5px solid var(--border2); background: transparent; color: var(--t1);
-  user-select: none;
+  cursor: pointer; transition: all 0.12s;
+  border: 0.5px solid var(--border2); background: var(--bg2); color: var(--t1);
+  user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-.act-btn:hover { background: var(--bg2); }
-.act-btn.primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
-.act-btn.primary:hover { opacity: 0.82; }
+.act-btn:hover { background: var(--bg3); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.act-btn.primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; box-shadow: 0 2px 8px rgba(0,113,227,0.25); }
+.act-btn.primary:hover { opacity: 0.88; box-shadow: 0 4px 14px rgba(0,113,227,0.3); }
 
 /* ── Calendar modal ── */
 .cal-modal-bg {
@@ -341,16 +331,40 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
   border: 0.5px solid rgba(255,255,255,0.55);
   box-shadow: 0 4px 32px rgba(0,0,0,0.08), inset 0 0.5px 0 rgba(255,255,255,0.7);
 }
-@media (prefers-color-scheme: dark) {
-  .glass {
-    background: rgba(60,60,65,0.55);
-    border: 0.5px solid rgba(255,255,255,0.12);
-    box-shadow: 0 4px 32px rgba(0,0,0,0.35), inset 0 0.5px 0 rgba(255,255,255,0.08);
-  }
+
+
+/* ── Dark mode toggle ── */
+.theme-toggle {
+  position: fixed; top: 16px; right: 20px; z-index: 100;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 0.5px solid var(--border2);
+  background: var(--bg2);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08), inset 0 0.5px 0 rgba(255,255,255,0.5);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; color: var(--t2);
+  user-select: none;
 }
+.theme-toggle:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,0,0,0.12); color: var(--t1); }
+.theme-toggle:active { transform: scale(0.94); }
+.dark .theme-toggle { box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 0.5px 0 rgba(255,255,255,0.06); }
 </style>
 </head>
 <body>
+
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle" title="Basculer dark/light mode">
+  <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
 
 <div class="shell">
   <nav class="sidebar">
@@ -459,7 +473,7 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
 const CITIES_DEFAULT = ['Rouen','Les Herbiers','Chartres','Toulouse','Lorient'];
 
 const ACT = [
-  { key:'pr_en_cours',   label:'PR en cours',       desc:'Projets de recrutement actifs' },
+  { key:'pr_en_cours',   label:'PR en cours (global)', desc:'Projets de recrutement actifs' },
   { key:'annonces',      label:'Annonces sourcées',  desc:'Annonces trouvées et contactées' },
   { key:'nouveaux_pr',   label:'Nouveaux PR',        desc:'Nouvelles offres liées aux sources' },
   { key:'envois_cv',     label:'Envois de CV',       desc:'CV envoyés sur des offres' },
@@ -493,28 +507,52 @@ function getD(city, week) {
   return S.data[week][city];
 }
 
-// ── Week helpers ──────────────────────────────────────────────────
+// ── Week helpers (Sam → Ven) ──────────────────────────────────────
+// La semaine va du SAMEDI au VENDREDI.
+// On utilise le samedi comme jour de référence pour la clé.
 function wkKey(date) {
+  // Ramène au samedi de la semaine courante (sam=6, on recule si nécessaire)
   const d = new Date(date); d.setHours(0,0,0,0);
-  d.setDate(d.getDate() + 4 - (d.getDay()||7));
-  const y = d.getFullYear(), s = new Date(y,0,1);
-  return `${y}-W${String(Math.ceil((((d-s)/86400000)+s.getDay()+1)/7)).padStart(2,'0')}`;
+  const day = d.getDay(); // 0=dim,1=lun,...,6=sam
+  // Ramène au samedi précédent (ou aujourd'hui si samedi)
+  const toSat = (day === 6) ? 0 : -(day + 1);
+  d.setDate(d.getDate() + toSat);
+  // Génère une clé unique basée sur l'année et numéro de semaine à partir du samedi
+  const y = d.getFullYear();
+  const startOfYear = new Date(y, 0, 1);
+  // Premier samedi de l'année
+  const firstSatDay = startOfYear.getDay();
+  const daysToFirstSat = (6 - firstSatDay + 7) % 7;
+  const firstSat = new Date(y, 0, 1 + daysToFirstSat);
+  let weekNum = Math.floor((d - firstSat) / (7 * 86400000)) + 1;
+  if (weekNum < 1) { weekNum = 1; }
+  return `${y}-SW${String(weekNum).padStart(2,'0')}`;
 }
+
+function wkSaturday(wk) {
+  // Retrouve le samedi à partir de la clé
+  const [y, w] = wk.split('-SW');
+  const startOfYear = new Date(+y, 0, 1);
+  const firstSatDay = startOfYear.getDay();
+  const daysToFirstSat = (6 - firstSatDay + 7) % 7;
+  const firstSat = new Date(+y, 0, 1 + daysToFirstSat);
+  const sat = new Date(firstSat);
+  sat.setDate(firstSat.getDate() + (+w - 1) * 7);
+  return sat;
+}
+
 function wkLabel(wk) {
-  const [y,w] = wk.split('-W');
-  const jan4 = new Date(+y,0,4), sw1 = new Date(jan4);
-  sw1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
-  const mon = new Date(sw1); mon.setDate(sw1.getDate()+(+w-1)*7);
-  const fri = new Date(mon); fri.setDate(mon.getDate()+4);
+  const sat = wkSaturday(wk);
+  const fri = new Date(sat); fri.setDate(sat.getDate() + 6);
   const f = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  return `Sem. ${w}  ·  ${f(mon)} – ${f(fri)}`;
+  const wNum = wk.split('-SW')[1];
+  return `Sem. ${+wNum}  ·  ${f(sat)} – ${f(fri)}`;
 }
+
 function shiftWk(wk, n) {
-  const [y,w] = wk.split('-W');
-  const jan4 = new Date(+y,0,4), sw1 = new Date(jan4);
-  sw1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
-  const mon = new Date(sw1); mon.setDate(sw1.getDate()+(+w-1)*7+n*7);
-  return wkKey(mon);
+  const sat = wkSaturday(wk);
+  sat.setDate(sat.getDate() + n * 7);
+  return wkKey(sat);
 }
 
 // ── KPI Carousel ──────────────────────────────────────────────────
@@ -703,21 +741,18 @@ document.getElementById('modal-bg').addEventListener('click', e => { if(e.target
 // ── Calendar picker ──────────────────────────────────────────────
 let calYear = new Date().getFullYear();
 
-function wkMondayDate(wk) {
-  const [y,w] = wk.split('-W');
-  const jan4 = new Date(+y,0,4), sw1 = new Date(jan4);
-  sw1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
-  const mon = new Date(sw1); mon.setDate(sw1.getDate()+(+w-1)*7);
-  return mon;
-}
-
 function weeksInYear(y) {
-  const d = new Date(y,11,28); // Dec 28 is always in last week
-  return parseInt(wkKey(d).split('-W')[1]);
+  // Compte les semaines sam→ven dans l'année
+  const startOfYear = new Date(y, 0, 1);
+  const firstSatDay = startOfYear.getDay();
+  const daysToFirstSat = (6 - firstSatDay + 7) % 7;
+  const firstSat = new Date(y, 0, 1 + daysToFirstSat);
+  const lastDay = new Date(y, 11, 31);
+  return Math.floor((lastDay - firstSat) / (7 * 86400000)) + 1;
 }
 
 function openCalModal() {
-  calYear = parseInt(S.week.split('-W')[0]);
+  calYear = parseInt(S.week.split('-SW')[0]) || new Date().getFullYear();
   renderCalGrid();
   document.getElementById('cal-modal-bg').classList.add('open');
   setTimeout(() => {
@@ -735,13 +770,13 @@ function renderCalGrid() {
   const totalWks = weeksInYear(calYear);
   const todayWk = wkKey(new Date());
   for (let w = 1; w <= totalWks; w++) {
-    const wk = `${calYear}-W${String(w).padStart(2,'0')}`;
-    const mon = wkMondayDate(wk);
-    const fri = new Date(mon); fri.setDate(mon.getDate()+4);
+    const wk = `${calYear}-SW${String(w).padStart(2,'0')}`;
+    const sat = wkSaturday(wk);
+    const fri = new Date(sat); fri.setDate(sat.getDate()+6);
     const fmt = d => d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
     const btn = document.createElement('button');
     btn.className = 'cal-wk' + (wk===S.week?' selected':'') + (wk===todayWk?' current-week':'');
-    btn.innerHTML = `<span style="color:var(--t3);font-size:11px">S${w}</span>  ${fmt(mon)} – ${fmt(fri)}`;
+    btn.innerHTML = `<span style="color:var(--t3);font-size:11px">S${+w}</span>  ${fmt(sat)} – ${fmt(fri)}`;
     btn.onclick = () => { S.week = wk; save(); render(); closeCalModal(); };
     grid.appendChild(btn);
   }
@@ -802,7 +837,25 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
 }
 
+// ── Dark mode toggle ─────────────────────────────────────────────
+const MOON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+const SUN_SVG  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  document.getElementById('theme-toggle').innerHTML = dark ? SUN_SVG : MOON_SVG;
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+}
+function toggleTheme() {
+  applyTheme(!document.documentElement.classList.contains('dark'));
+}
+function initTheme() {
+  const saved = localStorage.getItem('theme');
+  applyTheme(saved === 'dark');
+}
+
 // ── Init ──────────────────────────────────────────────────────────
+initTheme();
 load();
 render();
 </script>
