@@ -807,7 +807,6 @@ function toast(msg) {
 applyTheme(localStorage.getItem('theme') === 'dark');
 
 // Login form validation
-const li = document.getElementById('login-input') || document.getElementById('login-name');
 ['login-name','login-city'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', () => {
@@ -818,23 +817,42 @@ const li = document.getElementById('login-input') || document.getElementById('lo
 document.getElementById('login-name').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-city').focus(); });
 document.getElementById('login-city').addEventListener('keydown', e => { if(e.key==='Enter' && document.getElementById('login-name').value.trim()) doLogin(); });
 
-// Auto-login
-const savedMe = localStorage.getItem('me_v2');
-if (savedMe) {
-  try {
-    ME = JSON.parse(savedMe);
-    initMe();
-    fetchTeam().then(() => {
-      if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
-      else { teamData[ME.key].name = ME.name; teamData[ME.key].city = ME.city; }
-      pushMyData();
-      renderTeam();
-    });
-    startPolling();
-  } catch(e) { document.getElementById('login-screen').classList.add('on'); }
-} else {
-  document.getElementById('login-screen').classList.add('on');
+// Show loading in team grid
+function showLoading() {
+  document.getElementById('team-grid').innerHTML = `
+    <div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--t3)">
+      <div style="font-size:32px;margin-bottom:12px">⏳</div>
+      <div style="font-size:14px">Chargement de l'équipe…</div>
+    </div>`;
 }
+
+// Auto-login or show login screen
+(function init() {
+  // Always show login screen first — safest approach
+  const savedMe = localStorage.getItem('me_v2');
+  if (savedMe) {
+    try {
+      const parsed = JSON.parse(savedMe);
+      if (parsed && parsed.name) {
+        ME = parsed;
+        initMe();
+        showLoading();
+        fetchTeam().then(() => {
+          if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
+          else { teamData[ME.key].name = ME.name; teamData[ME.key].city = ME.city; }
+          pushMyData();
+          renderTeam();
+        }).catch(() => {
+          renderTeam();
+        });
+        startPolling();
+        return;
+      }
+    } catch(e) {}
+  }
+  // No valid session — show login
+  document.getElementById('login-screen').classList.add('on');
+})();
 </script>
 </body>
 </html>
