@@ -521,24 +521,29 @@ function userKey(name) {
 }
 
 function doLogin() {
-  const nameEl = document.getElementById('login-name');
-  const cityEl = document.getElementById('login-city');
-  const name = nameEl ? nameEl.value.trim() : '';
-  const city = cityEl ? cityEl.value.trim() : '';
-  if (!name) { nameEl && nameEl.focus(); return; }
-  ME = { key: name.toLowerCase().replace(/[^a-z0-9]/g,'_'), name: name, city: city || '—' };
-  try { localStorage.setItem('me_v2', JSON.stringify(ME)); } catch(e){}
-  document.getElementById('login-screen').classList.remove('on');
-  initMe();
-  if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
-  else { teamData[ME.key].name = ME.name; teamData[ME.key].city = ME.city; }
-  showLoading();
-  fetchTeam().then(() => {
-    if (!teamData[ME.key]) teamData[ME.key] = { name: ME.name, city: ME.city, data: {} };
-    pushMyData();
-    renderTeam();
-  }).catch(() => { renderTeam(); });
-  startPolling();
+  try {
+    const nameEl = document.getElementById('login-name');
+    const cityEl = document.getElementById('login-city');
+    const name = nameEl ? nameEl.value.trim() : '';
+    const city = cityEl ? cityEl.value.trim() : '';
+    if (!name) { if(nameEl) nameEl.focus(); return; }
+    ME = { key: name.toLowerCase().replace(/[^a-z0-9]/g,'_'), name: name, city: city || '—' };
+    try { localStorage.setItem('me_v2', JSON.stringify(ME)); } catch(e){}
+    document.getElementById('login-screen').classList.remove('on');
+    initMe();
+    teamData[ME.key] = teamData[ME.key] || { name: ME.name, city: ME.city, data: {} };
+    teamData[ME.key].name = ME.name;
+    teamData[ME.key].city = ME.city;
+    showLoading();
+    fetchTeam().then(() => {
+      teamData[ME.key] = teamData[ME.key] || { name: ME.name, city: ME.city, data: {} };
+      pushMyData();
+      renderTeam();
+    }).catch(() => renderTeam());
+    startPolling();
+  } catch(err) {
+    alert('Erreur : ' + err.message);
+  }
 }
 
 function initMe() {
@@ -567,8 +572,12 @@ function colorFor(key) {
 }
 
 function renderTeam() {
-  document.getElementById('wk-label').textContent = wkLabel(currentWeek);
+  try {
+    const lbl = document.getElementById('wk-label');
+    if (lbl) lbl.textContent = wkLabel(currentWeek);
+  } catch(e) {}
   const grid = document.getElementById('team-grid');
+  if (!grid) return;
   const keys = Object.keys(teamData).sort();
   if (!keys.length) {
     grid.innerHTML = '<div class="empty-state"><div class="big">👥</div><p>Personne encore.<br>Sois le premier à rejoindre !</p></div>';
@@ -578,6 +587,7 @@ function renderTeam() {
   keys.forEach((key, idx) => {
     const m = teamData[key];
     const d = getMemberWeek(key, currentWeek);
+    if (!d) return;
     const isMe = ME && key === ME.key;
     const col = colorFor(key);
     const initial = (m.name||'?').charAt(0).toUpperCase();
