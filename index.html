@@ -759,11 +759,10 @@ function exportMemberCSV() {
   Object.keys(m.data||{}).sort().forEach(wk => {
     const d = m.data[wk];
     if (!ALL.some(x=>(d[x.key]||0)>0) && !d._notes) return;
-    rows.push([wk, ...ALL.map(x=>d[x.key]||0), (d._notes||'').replace(/;|
-/g,' ')].join(';'));
+    const notes = (d._notes||'').replace(/[;\n\r]/g,' ');
+    rows.push([wk, ...ALL.map(x=>d[x.key]||0), notes].join(';'));
   });
-  dlCSV(rows.join('
-'), `${m.name}_${m.city}_kpis.csv`);
+  dlCSV(rows.join('\n'), `${m.name}_${m.city}_kpis.csv`);
 }
 
 function exportGlobalCSV() {
@@ -773,12 +772,11 @@ function exportGlobalCSV() {
     Object.keys(m.data||{}).sort().forEach(wk => {
       const d = m.data[wk];
       if (!ALL.some(x=>(d[x.key]||0)>0) && !d._notes) return;
-      rows.push([wk, m.name, m.city, ...ALL.map(x=>d[x.key]||0), (d._notes||'').replace(/;|
-/g,' ')].join(';'));
+      const notes = (d._notes||'').replace(/[;\n\r]/g,' ');
+      rows.push([wk, m.name, m.city, ...ALL.map(x=>d[x.key]||0), notes].join(';'));
     });
   });
-  dlCSV(rows.join('
-'), `equipe_kpis_${currentWeek}.csv`);
+  dlCSV(rows.join('\n'), `equipe_kpis_${currentWeek}.csv`);
 }
 
 // ── Delete member ─────────────────────────────────────────────────
