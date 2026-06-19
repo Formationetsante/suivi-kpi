@@ -232,7 +232,18 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
   padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;
 }
 .sm-label { font-size: 12px; color: var(--t2); margin-bottom: 4px; }
-.sm-val { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; color: var(--t1); }
+.sm-val {
+  font-size: 24px; font-weight: 700; letter-spacing: -0.8px; color: var(--t1);
+  cursor: pointer; display: inline-block; min-width: 28px; border-radius: 6px;
+  padding: 1px 4px; margin: -1px -4px; transition: background 0.12s;
+}
+.sm-val:hover { background: var(--bg3); }
+.sm-val-input {
+  width: 70px; font-size: 22px; font-weight: 700; letter-spacing: -0.8px;
+  color: var(--t1); background: var(--bg2); border: 1.5px solid var(--accent);
+  border-radius: 6px; padding: 0 4px; font-family: var(--font); outline: none;
+}
+.sm-val-input::-webkit-inner-spin-button, .sm-val-input::-webkit-outer-spin-button { opacity: 1; }
 .sm-btns { display: flex; flex-direction: column; gap: 4px; }
 .sm-btn {
   width: 26px; height: 26px; border-radius: 7px;
@@ -501,14 +512,14 @@ async function fetchTeam() {
     if (!res.ok) return;
     const remote = await res.json();
     if (!remote) return;
-    // Merge remote into teamData — but NEVER overwrite data currently being edited
+    // Hard stop: if the user is actively editing any value, skip this entire
+    // refresh cycle (data merge AND render) to avoid any input/focus disruption.
+    if (_editing) return;
+    // Merge remote into teamData
     Object.entries(remote).forEach(([key, val]) => {
       if (!teamData[key]) teamData[key] = { name: val.name, city: val.city, data: {} };
       else { teamData[key].name = val.name; teamData[key].city = val.city; }
-      // Skip data overwrite if user is actively editing (any card) — prevents the
-      // "counter resets" bug caused by a poll landing between a click and its save.
-      if (_editing) return;
-      // Also never let remote overwrite OUR OWN unsaved local changes if a save is pending
+      // Never let remote overwrite OUR OWN unsaved local changes if a save is pending
       if (key === (ME && ME.key) && _saveTimer) return;
       if (val.data) teamData[key].data = val.data;
     });
@@ -674,7 +685,7 @@ function renderSheetGrid(containerId, metrics, key, d) {
     div.innerHTML = `
       <div>
         <div class="sm-label">${m.label}</div>
-        <div class="sm-val" id="sv-${key}-${m.key}">${d[m.key]||0}</div>
+        <div class="sm-val" id="sv-${key}-${m.key}" onclick="editVal('${key}','${m.key}')" title="Cliquer pour saisir une valeur">${d[m.key]||0}</div>
       </div>
       <div class="sm-btns">
         <button class="sm-btn" onclick="adj('${key}','${m.key}',1)">+</button>
@@ -697,6 +708,44 @@ function adj(key, metric, delta) {
   // Update card value too
   renderTeam();
   scheduleSave(key);
+}
+
+function editVal(key, metric) {
+  const el = document.getElementById(`sv-${key}-${metric}`);
+  if (!el || el.querySelector('input')) return; // already editing
+  const d = getMemberWeek(key, currentWeek);
+  const current = d[metric] || 0;
+
+  _editing = true;
+  clearTimeout(_editTimer);
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.min = '0';
+  input.value = current;
+  input.className = 'sm-val-input';
+  input.onclick = (e) => e.stopPropagation();
+
+  const commit = () => {
+    let val = parseInt(input.value, 10);
+    if (isNaN(val) || val < 0) val = 0;
+    d[metric] = val;
+    el.textContent = val;
+    renderTeam();
+    scheduleSave(key);
+    _editTimer = setTimeout(() => { _editing = false; }, 1500);
+  };
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { e.preventDefault(); el.textContent = current; _editTimer = setTimeout(() => { _editing = false; }, 500); }
+  });
+
+  el.textContent = '';
+  el.appendChild(input);
+  input.focus();
+  input.select();
 }
 
 function scheduleSave(key) {
