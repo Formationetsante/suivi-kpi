@@ -352,7 +352,7 @@ html, body { font-family: var(--font); background: var(--bg); color: var(--t1); 
 </div>
 
 <!-- Detail sheet -->
-<div class="detail-bg" id="detail-bg" onclick="closeDetail(e)">
+<div class="detail-bg" id="detail-bg">
   <div class="detail-sheet" id="detail-sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-header">
@@ -431,6 +431,8 @@ let currentWeek = wkKey(new Date());
 let teamData = {}; // { userKey: { name, city, data: { week: { metrics } } } }
 let detailKey = null;
 let _saveTimer = null;
+let _editing = false;
+let _editTimer = null;
 let calYear = new Date().getFullYear();
 let _pollTimer = null;
 
@@ -499,10 +501,15 @@ async function fetchTeam() {
     if (!res.ok) return;
     const remote = await res.json();
     if (!remote) return;
-    // Merge remote into teamData
+    // Merge remote into teamData — but NEVER overwrite data currently being edited
     Object.entries(remote).forEach(([key, val]) => {
       if (!teamData[key]) teamData[key] = { name: val.name, city: val.city, data: {} };
       else { teamData[key].name = val.name; teamData[key].city = val.city; }
+      // Skip data overwrite if user is actively editing (any card) — prevents the
+      // "counter resets" bug caused by a poll landing between a click and its save.
+      if (_editing) return;
+      // Also never let remote overwrite OUR OWN unsaved local changes if a save is pending
+      if (key === (ME && ME.key) && _saveTimer) return;
       if (val.data) teamData[key].data = val.data;
     });
     renderTeam();
@@ -678,10 +685,16 @@ function renderSheetGrid(containerId, metrics, key, d) {
 }
 
 function adj(key, metric, delta) {
+  // Block remote refresh while editing
+  _editing = true;
+  clearTimeout(_editTimer);
+  _editTimer = setTimeout(() => { _editing = false; }, 3000);
+
   const d = getMemberWeek(key, currentWeek);
   d[metric] = Math.max(0, (d[metric]||0) + delta);
   const el = document.getElementById(`sv-${key}-${metric}`);
   if (el) el.textContent = d[metric];
+  // Update card value too
   renderTeam();
   scheduleSave(key);
 }
@@ -692,6 +705,7 @@ function scheduleSave(key) {
   // Always push MY data; if editing someone else, also push their data
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(async () => {
+    _saveTimer = null; // reset so fetchTeam knows the save has completed
     // Push my data
     await pushMyData();
     // If editing someone else, push their data too
